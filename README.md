@@ -16,6 +16,7 @@ Android 1.5.0, based on the previous native Android 1.4.0 application and the de
 - Shows precise before-and-after values for modified fields in the activity history.
 - Keeps the authenticated session until logout or 23:59:59 IST.
 - Saves generated PDF and Excel files with Android's file picker.
+- Uses the measured Android viewport height to avoid collapsed report and administration dialogs on embedded WebViews.
 - Supports system-camera/image selection, GPS capture, and on-device barcode/OCR recognition. Serial numbers must be checked and confirmed against the picture before uploading.
 - Does not allow arbitrary remote pages to call the native bridge. HTTPS-only networking, no certificate bypass, no public JavaScript interface, and no session backup.
 
@@ -53,6 +54,16 @@ node scripts/verify-web.mjs
 
 The installable debug APK is generated at `app/build/outputs/apk/debug/app-debug.apk`.
 The prior internal APK remains in the local `releases` folder. APKs, signing keys, build caches and device screenshots are excluded from Git.
+
+## Verification on 3 October 2026
+
+- Android API 36 debug build and lint completed successfully (0 errors).
+- The private GitHub build check passed; reference-control parity, API allowlist, bridge responses/timeouts and viewport resizing have automated checks.
+- The connected LAVA phone authenticated as Administrator, restored the live session after updates and loaded 268 records.
+- Admin User activity displayed login/update history and precise before/after comments. The Reports panel now displays correctly with the live 268-record preview.
+- A valid-format unlisted test number was rejected without requesting an SMS; invalid app sessions were rejected by the server.
+- PDF/Excel saved-file checks, Editor/Installer phone tests, camera/GPS tests and a Studio run are not yet complete. No consumer records were modified during testing.
+- APK 16 KB ZIP alignment and all six 64-bit native LOAD alignments pass. Five native libraries need RELRO review and a 16 KB emulator test before Play submission. `scripts/verify-native-alignment.py <apk> --require-relro` exposes that remaining check.
 
 ## Important distribution note
 

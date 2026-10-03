@@ -18,6 +18,9 @@ assert.ok(!asset.includes('src="https://www.gstatic.com/firebasejs/'), 'Native F
 assert.ok(asset.includes("UlaNative.request('api',{method,args})"));
 assert.ok(asset.includes("Android 1.5.0 · Web 45.7"));
 assert.ok(asset.includes('serial number was not confirmed'), 'Photo serial confirmation must remain required');
+for (const style of asset.matchAll(/<style>([\s\S]*?)<\/style>/g)) {
+  assert.ok(!/\b\d+(?:\.\d+)?(?:dvh|vh)\b/.test(style[1]), 'Android height limits must use measured viewport pixels');
+}
 const originalPath = path.join(root, 'reference/Index-45.7.html');
 if (fs.existsSync(originalPath)) {
   const original = fs.readFileSync(originalPath, 'utf8');
@@ -40,10 +43,16 @@ assert.throws(() => sandbox.mobileAndroidCall_('', 'listRecords', Array(7)), /In
 const sent = [], callbacks = new Map();
 const bridge = fs.readFileSync(path.join(root, 'app/src/main/assets/native-adapter.js'), 'utf8');
 const host = {postMessage: value => sent.push(JSON.parse(value))};
-const browser = {window: {ulaHost: host}, ulaHost: host,
-  document: {addEventListener() {}}, setTimeout(fn) {callbacks.set(callbacks.size + 1, fn); return callbacks.size;},
+const viewportProperties = new Map(), windowEvents = new Map();
+const browser = {window: {ulaHost: host, addEventListener(name, fn) {windowEvents.set(name,fn);}}, ulaHost: host, innerHeight:728,
+  document: {documentElement:{style:{setProperty(name,value) {viewportProperties.set(name,value);}}},addEventListener() {}}, setTimeout(fn) {callbacks.set(callbacks.size + 1, fn); return callbacks.size;},
   clearTimeout(id) {callbacks.delete(id);}};
 vm.createContext(browser); vm.runInContext(bridge, browser);
+assert.equal(viewportProperties.get('--ula-viewport-height'), '728px');
+browser.innerHeight=0; windowEvents.get('resize')();
+assert.equal(viewportProperties.get('--ula-viewport-height'), '728px', 'Transient zero layout must not collapse dialogs');
+browser.innerHeight=840; windowEvents.get('resize')();
+assert.equal(viewportProperties.get('--ula-viewport-height'), '840px', 'Rotation must update the layout');
 const resolved = browser.window.UlaNative.request('session');
 host.onmessage({data: JSON.stringify({id: sent[0].id, ok: true, result: {user: {role: 'ADMIN'}}})});
 assert.equal((await resolved).user.role, 'ADMIN');

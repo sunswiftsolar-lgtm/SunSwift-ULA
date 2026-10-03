@@ -1,5 +1,11 @@
 /* Only the bundled HTTPS asset origin can communicate with the native host. */
 (() => {
+  const syncViewport = () => {
+    if (innerHeight > 0) document.documentElement.style.setProperty('--ula-viewport-height', innerHeight+'px');
+  };
+  syncViewport();
+  window.addEventListener('resize', syncViewport);
+  document.addEventListener('DOMContentLoaded', syncViewport);
   let nextId = 0;
   const pending = new Map();
   window.UlaNative = {
@@ -20,6 +26,7 @@
     reply.ok ? call.resolve(reply.result) : call.reject(Error(reply.error || 'ULA request failed.'));
   });
   document.addEventListener('click', event => {
+    syncViewport();
     const anchor = event.target.closest?.('a[download]');
     if (!anchor || !/^(blob:|data:)/.test(anchor.href)) return;
     event.preventDefault();

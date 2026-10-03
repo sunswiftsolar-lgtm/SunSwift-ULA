@@ -40,6 +40,11 @@ adapted = replaceOnce(adapted, /    async function confirmPhotoSerial\(file,type
 const bridge = fs.readFileSync(path.join(root, 'app/src/main/assets/native-adapter.js'), 'utf8');
 const mobileCss = fs.readFileSync(path.join(root, 'app/src/main/assets/native-mobile.css'), 'utf8');
 adapted = adapted.replace('</head>', `<style>${mobileCss}</style><script>${bridge}</script></head>`);
+// Some embedded Android WebViews measure vh/dvh as zero at first layout. Use
+// the real JavaScript viewport height, keeping each original proportion intact.
+adapted = adapted.replace(/<style>([\s\S]*?)<\/style>/g, (tag, css) =>
+  `<style>${css.replace(/\b(\d+(?:\.\d+)?)(?:dvh|vh)\b/g, (_, value) =>
+    `calc(var(--ula-viewport-height, 600px) * ${Number(value) / 100})`)}</style>`);
 const assets = path.join(root, 'app/src/main/assets');
 fs.mkdirSync(assets, {recursive:true});
 fs.writeFileSync(path.join(assets, 'ula-45.7.html'), adapted);
