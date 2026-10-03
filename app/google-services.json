@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "422470553947",
+    "project_id": "ula-dda9e",
+    "storage_bucket": "ula-dda9e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:422470553947:android:b132b5e5ca024ccc428a7e",
+        "android_client_info": {
+          "package_name": "com.sunswift.ula.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9HDzDzQnG5hzkvXGS9rC44D0wLSm0hN8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

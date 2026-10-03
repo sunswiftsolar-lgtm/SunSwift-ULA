@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SunSwiftULA" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@color/ula_navy</item>
+        <item name="android:navigationBarColor">@color/ula_navy</item>
+        <item name="android:windowBackground">@color/ula_background</item>
+        <item name="android:colorAccent">@color/ula_brand</item>
+    </style>
+</resources>

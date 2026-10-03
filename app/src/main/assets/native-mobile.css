@@ -1,0 +1,21 @@
+/* Android-only narrow-screen adjustments; field names and workflows stay unchanged. */
+@media screen and (max-width:640px){
+  .topbar{flex-wrap:wrap;align-items:flex-start;padding:16px;gap:12px}
+  .topbar>img{flex:0 0 48px;width:48px;height:48px}
+  .topbar>div:not(.user-strip){flex:1;min-width:0}
+  .topbar h1{font-size:20px;line-height:1.2}
+  .topbar p{font-size:12px;line-height:1.45}
+  .topbar .user-strip{flex:0 0 100%;width:100%;min-width:0;margin-left:0;gap:7px}
+  .topbar .top-cloud{max-width:100%;flex-wrap:wrap}
+  .topbar .top-cloud>div:last-child{flex-wrap:wrap;max-width:100%}
+  .topbar .excel-status{white-space:normal;overflow-wrap:anywhere}
+  .topbar .app-version{white-space:normal;font-size:10px}
+  main{padding:0 12px 24px;margin-top:14px}
+  .panel-body{padding:14px}
+  .panel-head,.analytics-head{padding:14px}
+  .stats{gap:9px}
+  .stat{min-height:92px;padding:10px 6px}
+  .stat strong{font-size:18px}
+  .stat span{font-size:10px}
+  .status{left:12px;right:12px;bottom:12px}
+}
