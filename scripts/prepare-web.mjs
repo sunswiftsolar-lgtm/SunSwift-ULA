@@ -33,7 +33,8 @@ adapted = replaceOnce(adapted, /    async function confirmPhotoSerial\(file,type
       const scale=Math.min(1,1600/Math.max(bitmap.width,bitmap.height));canvas.width=Math.round(bitmap.width*scale);canvas.height=Math.round(bitmap.height*scale);canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();
       const scanned=await UlaNative.request('scan',{dataUrl:canvas.toDataURL('image/jpeg',.85),type});
       const candidate=scanned.candidates?.[0]||'';
-      const confirmed=prompt(candidate?PHOTO_LABELS[type]+' serial detected. Check and correct it against the picture before saving:':'Check the '+PHOTO_LABELS[type]+' serial number against the picture before saving:',candidate||form.elements[PHOTO_SERIAL_FIELDS[type]].value);
+      const unavailable=scanned.source==='model-unavailable'?'Automatic scanning is not ready yet. Connect to the internet to download its on-device models. For now, ':'';
+      const confirmed=prompt(candidate?PHOTO_LABELS[type]+' serial detected. Check and correct it against the picture before saving:':unavailable+'Check the '+PHOTO_LABELS[type]+' serial number against the picture before saving:',candidate||form.elements[PHOTO_SERIAL_FIELDS[type]].value);
       if(confirmed===null)throw Error('Image upload cancelled because the serial number was not confirmed.');
       const serial=confirmed.trim().toUpperCase();if(!/^[A-Z0-9][A-Z0-9._\\/-]{4,79}$/.test(serial))throw Error('Enter a valid serial number or recapture the image.');return serial;
     }\n`);

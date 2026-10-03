@@ -64,4 +64,26 @@ host.onmessage({data: JSON.stringify({id: sent[1].id, ok: false, error: 'Admin a
 await assert.rejects(denied, /Admin access/);
 const timedOut = browser.window.UlaNative.request('api');
 [...callbacks.values()][0](); await assert.rejects(timedOut, /timed out/);
-console.log(`PASS: ${scripts} scripts parse; web controls preserved; 27-method allowlist and bridge success/error/timeout checks.`);
+
+// A model download must not remove the mandatory human serial check.
+const confirmationCode = asset.match(/async function confirmPhotoSerial\(file,type\)\{[\s\S]*?(?=    async function captureConsumerPhoto)/)?.[0];
+assert.ok(confirmationCode, 'Expected the native photo serial adapter');
+let scanResult = {candidates: [], source: 'model-unavailable'}, answer = 'new12345', promptMessage = '';
+const photoSandbox = {
+  PHOTO_SERIAL_FIELDS: {panel1:'panelNo1'}, PHOTO_LABELS:{panel1:'Panel 1'},
+  form:{elements:{panelNo1:{value:'OLD12345'}}},
+  createImageBitmap: async () => ({width:800,height:600,close(){}}),
+  document:{createElement:() => ({getContext:() => ({drawImage(){}}),toDataURL:() => 'data:image/jpeg;base64,test'})},
+  UlaNative:{request:async () => scanResult},
+  prompt:message => {promptMessage=message; return answer;}
+};
+vm.createContext(photoSandbox); vm.runInContext(confirmationCode, photoSandbox);
+assert.equal(await photoSandbox.confirmPhotoSerial({},'panel1'), 'NEW12345');
+assert.match(promptMessage, /Automatic scanning is not ready/);
+answer=null; await assert.rejects(photoSandbox.confirmPhotoSerial({},'panel1'), /not confirmed/);
+answer='bad'; await assert.rejects(photoSandbox.confirmPhotoSerial({},'panel1'), /valid serial/);
+scanResult={candidates:['DETECTED123'],source:'barcode'}; answer='DETECTED123';
+assert.equal(await photoSandbox.confirmPhotoSerial({},'panel1'), 'DETECTED123');
+assert.match(promptMessage, /Check and correct/);
+assert.equal(await photoSandbox.confirmPhotoSerial({},'plant'), '');
+console.log(`PASS: ${scripts} scripts parse; web controls preserved; 27-method allowlist, bridge success/error/timeout, viewport and required serial confirmation checks.`);

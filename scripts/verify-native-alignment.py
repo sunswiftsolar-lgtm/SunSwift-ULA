@@ -1,4 +1,4 @@
-"""Read-only ELF segment alignment check for an APK's bundled native libraries."""
+"""Read-only ELF segment alignment check for APK/AAB native libraries."""
 import struct
 import sys
 import zipfile
@@ -24,7 +24,8 @@ with zipfile.ZipFile(sys.argv[1]) as apk:
                 alignments.append(segment[-1])
             if segment[0] == 0x6474e552:
                 relro_ends.append(segment[3] + segment[6] if is_64 else segment[2] + segment[5])
-        required = name.startswith(('lib/arm64-v8a/', 'lib/x86_64/'))
+        required = name.startswith(('lib/arm64-v8a/', 'lib/x86_64/',
+                                    'base/lib/arm64-v8a/', 'base/lib/x86_64/'))
         if required:
             required_count += 1
             if not alignments or any(value < 16384 for value in alignments):
@@ -33,5 +34,6 @@ with zipfile.ZipFile(sys.argv[1]) as apk:
                 relro_warnings.append(name)
         print(f'{name}: LOAD {alignments}; RELRO aligned={all(end % 16384 == 0 for end in relro_ends)}; 16KB required={required}')
     print(f'16 KB 64-bit LOAD alignment: {required_count - len(incompatible)}/{required_count} compatible')
-    print(f'RELRO follow-up required: {len(relro_warnings)} libraries. Verify on a 16 KB emulator before Play upload.')
+    print(f'64-bit RELRO alignment: {required_count - len(relro_warnings)}/{required_count} compatible')
+    print('Static checks do not replace a runtime test on a 16 KB device or emulator.')
     sys.exit(bool(incompatible or ('--require-relro' in sys.argv and relro_warnings)))

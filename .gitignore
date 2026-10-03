@@ -5,6 +5,8 @@
 local.properties
 build/
 app/build/
+.cxx/
+app/.cxx/
 *.iml
 .idea/
 toolchain/
@@ -12,6 +14,7 @@ toolchain/
 *.keystore
 keystore.properties
 signing.properties
+.signing/
 *.apk
 *.aab
 releases/*.png

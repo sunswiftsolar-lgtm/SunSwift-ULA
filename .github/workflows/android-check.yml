@@ -23,7 +23,7 @@ jobs:
           log-accepted-android-sdk-licenses: 'false'
       - uses: gradle/actions/setup-gradle@v4
       - name: Install SDK
-        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358" "cmake;3.22.1"
       - name: Verify web reference and bridge
         run: node scripts/verify-web.mjs
       - name: Build and lint
@@ -31,7 +31,7 @@ jobs:
       - name: Check 64-bit native alignment
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -P 16 4 app/build/outputs/apk/debug/app-debug.apk
-          python3 scripts/verify-native-alignment.py app/build/outputs/apk/debug/app-debug.apk
+          python3 scripts/verify-native-alignment.py app/build/outputs/apk/debug/app-debug.apk --require-relro
       - uses: actions/upload-artifact@v4
         if: always()
         with:

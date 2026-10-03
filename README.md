@@ -18,6 +18,7 @@ Android 1.5.0, based on the previous native Android 1.4.0 application and the de
 - Saves generated PDF and Excel files with Android's file picker.
 - Uses the measured Android viewport height to avoid collapsed report and administration dialogs on embedded WebViews.
 - Supports system-camera/image selection, GPS capture, and on-device barcode/OCR recognition. Serial numbers must be checked and confirmed against the picture before uploading.
+- Barcode/OCR models are delivered by Google Play Services, requested at installation. If a model is still downloading, the user can manually confirm a valid serial; cancellation and invalid serials still block upload. Recognition itself remains on-device.
 - Does not allow arbitrary remote pages to call the native bridge. HTTPS-only networking, no certificate bypass, no public JavaScript interface, and no session backup.
 
 ## Backend compatibility
@@ -36,13 +37,15 @@ Do not replace the existing database, run initial setup against a new Sheet, or 
 
 ## Build
 
-Open this folder in Android Studio with JDK 17, Android SDK Platform 36 and Build Tools 36.0.0. The project uses Gradle 8.11.1 / Android Gradle Plugin 8.10.1 and targets Android 16 (API 36). Run:
+Open this folder in Android Studio with JDK 17, Android SDK Platform 36, Build Tools 36.0.0, NDK 28.2.13676358 and CMake 3.22.1. The project uses Gradle 8.11.1 / Android Gradle Plugin 8.10.1 / Kotlin and Compose compiler 2.1.20 and targets Android 16 (API 36). Run:
 
 ```powershell
 ./gradlew.bat assembleDebug
 ```
 
 For the Windows Java socket issue encountered on this workstation, PowerShell 7 can run `./scripts/build-local.ps1`. It applies compatibility options only to the build and its children, without changing global Java settings.
+
+The official AndroidX graphics-path 1.1.0 native sources are retained under `vendor/androidx-graphics-path` with their license. A separate app CMake wrapper rebuilds the identical JNI implementation with both 16 KB page-size linker flags. CI checks the actual packaged replacement, including RELRO; it must not silently fall back to the incompatible upstream prebuilt. See the vendor README for the pinned source and archive hash.
 
 Verify bundled UI parity and the bridge before building:
 
@@ -63,10 +66,23 @@ The prior internal APK remains in the local `releases` folder. APKs, signing key
 - Admin User activity displayed login/update history and precise before/after comments. The Reports panel now displays correctly with the live 268-record preview.
 - A valid-format unlisted test number was rejected without requesting an SMS; invalid app sessions were rejected by the server.
 - PDF/Excel saved-file checks, Editor/Installer phone tests, camera/GPS tests and a Studio run are not yet complete. No consumer records were modified during testing.
-- APK 16 KB ZIP alignment and all six 64-bit native LOAD alignments pass. Five native libraries need RELRO review and a 16 KB emulator test before Play submission. `scripts/verify-native-alignment.py <apk> --require-relro` exposes that remaining check.
+- The initial debug build passed ZIP/LOAD alignment but exposed five native RELRO issues. The signed release preparation below resolves those bundled-library issues with stricter checks.
+
+### Signed release preparation
+
+- Release build, signed AAB/APK and release lint completed successfully (0 errors, 14 warnings).
+- The final APK passes 16 KB ZIP alignment. All bundled ARM64 and x86-64 native LOAD and RELRO segments pass strict checks in both the APK and AAB. A runtime test on a 16 KB device/emulator is still pending; the connected LAVA phone uses 4 KB pages.
+- The production Firebase client is `com.sunswift.ula`, app ID `1:422470553947:android:12a7a37254935aa8428a7e`, in the same `ula-dda9e` project. The genuine downloaded configuration includes production and debug clients. Public SHA-1/SHA-256 fingerprints for the local upload key and current Play app-signing key are registered.
+- The signed production APK was installed and launched on the connected phone without replacing the debug app. Production OTP/dashboard confirmation remains a user-assisted test until completed; the earlier admin checks above were on the debug app.
+- Mandatory manual serial confirmation, model-unavailable fallback, cancellation and invalid input have automated regression checks.
+- Play Console accepted the signed AAB and saved release `1.5.0-web-v45.7 (6)` as **Draft** on the **Inactive** internal-testing track. No testing rollout, production release or tester invitations were made. Exact artifact hashes and non-secret signing fingerprints are recorded in `reference/play-release-6.json`.
 
 ## Important distribution note
 
-The debug APK (`com.sunswift.ula.debug`) is suitable only for controlled testing and uses the existing Firebase registration. A Play Store update must use the existing Play package, organization-owned upload key and matching Firebase registration. Do not generate a replacement signing identity without confirming the existing app's configuration.
+The debug APK (`com.sunswift.ula.debug`) is suitable only for controlled testing and uses the existing Firebase registration. The new **ULA Data Management** Play application uses `com.sunswift.ula`. Its upload key was created locally with explicit user approval. Do not generate another identity or replace it automatically.
+
+On the original Windows account, `./scripts/build-play-release.ps1` builds the signed release using `.signing/ula-upload.p12` and a Windows-DPAPI-encrypted password. Both are excluded from Git. Keep a secure recoverable backup of the key and its password outside GitHub; DPAPI alone is tied to this Windows account. Never commit signing credentials or place them in CI logs.
+
+The internal-testing draft bundle is Android `1.5.0-web-v45.7`, version code `6`. Public release/privacy declarations and the remaining device tests are not certified complete merely because Play accepts a draft upload.
 
 Upload only a signed release AAB to **ULA Data Management → Internal testing** and save it as a draft. Do not start a testing rollout or publish to production as part of this request.

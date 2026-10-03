@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.compose'
     id 'com.google.gms.google-services'
 }
 
@@ -8,6 +9,7 @@ android {
     namespace 'com.sunswift.ula'
     compileSdk 36
     buildToolsVersion '36.0.0'
+    ndkVersion '28.2.13676358'
 
     defaultConfig {
         applicationId 'com.sunswift.ula'
@@ -15,6 +17,11 @@ android {
         targetSdk 36
         versionCode 6
         versionName '1.5.0-web-v45.7'
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_STL=c++_static'
+            }
+        }
     }
 
     compileOptions {
@@ -31,8 +38,22 @@ android {
         buildConfig true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.5.14'
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')
+            version '3.22.1'
+            if (project.hasProperty('ulaNativeBuildDir')) {
+                buildStagingDirectory file(project.property('ulaNativeBuildDir'))
+            }
+        }
+    }
+
+    packaging {
+        jniLibs {
+            // The app-built replacement takes precedence over the upstream
+            // prebuilt. Strict ELF checks in CI verify its 16 KB RELRO layout.
+            pickFirsts += ['**/libandroidx.graphics.path.so']
+        }
     }
 
     signingConfigs {
@@ -46,6 +67,14 @@ android {
                 keyPassword 'android'
             }
         }
+        if (System.getenv('ULA_UPLOAD_STORE_FILE')) {
+            upload {
+                storeFile file(System.getenv('ULA_UPLOAD_STORE_FILE'))
+                storePassword System.getenv('ULA_UPLOAD_STORE_PASSWORD')
+                keyAlias System.getenv('ULA_UPLOAD_KEY_ALIAS')
+                keyPassword System.getenv('ULA_UPLOAD_KEY_PASSWORD')
+            }
+        }
     }
 
     buildTypes {
@@ -57,6 +86,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (signingConfigs.findByName('upload')) signingConfig signingConfigs.upload
         }
     }
 }
@@ -74,7 +104,10 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.5.1')
     implementation 'com.google.firebase:firebase-auth'
     implementation 'androidx.webkit:webkit:1.12.1'
-    implementation 'com.google.mlkit:barcode-scanning:17.3.0'
-    implementation 'com.google.mlkit:text-recognition:16.0.1'
+    // Updated native path library and Play Services models avoid older bundled
+    // scanner binaries that cannot run on Android devices with 16 KB pages.
+    implementation 'androidx.graphics:graphics-path:1.1.0'
+    implementation 'com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1'
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:19.0.1'
     debugImplementation 'androidx.compose.ui:ui-tooling'
 }

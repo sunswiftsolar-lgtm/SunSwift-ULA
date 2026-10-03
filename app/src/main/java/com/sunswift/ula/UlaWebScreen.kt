@@ -30,6 +30,7 @@ import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
 import androidx.webkit.WebResourceErrorCompat
 import com.google.android.gms.tasks.Task
+import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
@@ -268,6 +269,11 @@ private suspend fun scanSerial(dataUrl: String): JSONObject = withContext(Dispat
         val words = if (codes.isEmpty()) textReader.process(image).awaitTask().text.lines().flatMap { it.split(Regex("\\s+")) } else emptyList()
         val candidates = (codes + words).filter { it.matches(Regex("[A-Z0-9][A-Z0-9._/-]{4,79}")) && it.any(Char::isDigit) }.distinct()
         JSONObject().put("candidates", JSONArray(candidates.take(8))).put("source", if (codes.isEmpty()) "text" else "barcode")
+    } catch (failure: MlKitException) {
+        if (failure.errorCode != MlKitException.UNAVAILABLE) throw failure
+        // Never infer a serial while the on-device model is still downloading.
+        // The web form still requires the user to manually confirm a valid one.
+        JSONObject().put("candidates", JSONArray()).put("source", "model-unavailable")
     } finally { scanner.close(); textReader.close(); bitmap.recycle() }
 }
 

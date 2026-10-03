@@ -18,7 +18,8 @@ $ulaBuildInfo.UseShellExecute = $false
 $ulaExistingOptions = $ulaBuildInfo.Environment['JAVA_TOOL_OPTIONS']
 $ulaBuildInfo.Environment['JAVA_TOOL_OPTIONS'] = "$ulaExistingOptions -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.WindowsSelectorProvider -Djdk.net.unixdomain.tmpdir=`"$SocketTempDirectory`""
 @('-classpath', 'gradle\wrapper\gradle-wrapper.jar', 'org.gradle.wrapper.GradleWrapperMain',
-  '--gradle-user-home', '.gradle-native-home', '--no-daemon') + $Tasks | ForEach-Object {
+  '--gradle-user-home', '.gradle-native-home', '--no-daemon', '--no-parallel', '--max-workers=1',
+  "-PulaNativeBuildDir=$(Join-Path ([System.IO.Path]::GetTempPath()) 'SunSwift-ULA-native')") + $Tasks | ForEach-Object {
     $ulaBuildInfo.ArgumentList.Add($_)
 }
 $ulaBuildProcess = [System.Diagnostics.Process]::Start($ulaBuildInfo)

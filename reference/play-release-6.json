@@ -1,0 +1,48 @@
+{
+  "appName": "ULA Data Management",
+  "packageName": "com.sunswift.ula",
+  "versionName": "1.5.0-web-v45.7",
+  "versionCode": 6,
+  "webReferenceVersion": "45.7",
+  "targetSdk": 36,
+  "preparedOn": "2026-10-03",
+  "playAppId": "4975585858808542335",
+  "playTrack": "Internal testing",
+  "playReleaseStatus": "Draft",
+  "playTrackStatus": "Inactive",
+  "rolledOut": false,
+  "aab": {
+    "file": "SunSwift-ULA-v1.5.0-Web-v45.7-Play-build6.aab",
+    "bytes": 14682632,
+    "sha256": "71eb662d63d5aaef49fe59b53523eb5e0c0eb353aa19a431d52a9171b1eb5a87"
+  },
+  "apk": {
+    "file": "SunSwift-ULA-v1.5.0-Web-v45.7-Release-build6.apk",
+    "bytes": 15152668,
+    "sha256": "a44dc252a8121294867d291e5544276794ade52b10e033ad0d923ecbbc51e3ad"
+  },
+  "uploadCertificate": {
+    "sha1": "05:C4:AE:5D:6A:45:AC:F6:08:7D:4B:4E:92:57:61:69:8F:A1:31:52",
+    "sha256": "9D:87:E0:6F:B8:48:EE:57:48:2E:0D:64:4A:57:23:EB:4F:11:74:8D:29:0F:BE:55:B0:39:04:E8:75:31:CF:BE"
+  },
+  "currentPlaySigningCertificate": {
+    "sha1": "00:D7:07:58:18:D1:2F:E8:75:59:72:CF:C1:C2:29:D1:2C:20:E4:8D",
+    "sha256": "C5:CF:2C:88:A2:31:71:4D:3B:03:7E:25:02:50:73:C9:4F:D5:A5:5D:59:8E:CB:D3:29:3A:4B:E8:8C:26:4E:60"
+  },
+  "checks": {
+    "releaseBuild": "passed",
+    "releaseLintErrors": 0,
+    "releaseLintWarnings": 14,
+    "apkSignature": "verified",
+    "aabSignerCertificate": "matches upload certificate",
+    "apk16KBZipAlignment": "passed",
+    "apkAndAab64BitLoadAlignment": "2/2 passed",
+    "apkAndAab64BitRelroAlignment": "2/2 passed",
+    "sourceControlParity": "32 fields preserved",
+    "requiredSerialConfirmationRegression": "passed",
+    "productionPhoneInstallAndLaunch": "passed",
+    "productionPhoneOtpAndDashboard": "awaiting user confirmation",
+    "runtime16KBDeviceTest": "pending",
+    "privacyAndReleaseDeclarations": "not certified complete"
+  }
+}
