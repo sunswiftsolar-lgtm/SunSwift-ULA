@@ -41,7 +41,17 @@
     "sourceControlParity": "32 fields preserved",
     "requiredSerialConfirmationRegression": "passed",
     "productionPhoneInstallAndLaunch": "passed",
-    "productionPhoneOtpAndDashboard": "awaiting user confirmation",
+    "productionPhoneOtpAndDashboard": "user reported completion; not independently observed on the production package",
+    "githubBuildChecks": "passed: https://github.com/sunswiftsolar-lgtm/SunSwift-ULA/actions/runs/37118546530",
+    "latestLocalBridgeRegression": "passed on 2026-10-03",
+    "latestArtifactHashVerification": "both immutable release copies match the recorded hashes",
+    "liveInvalidSessionChecks": "records, activity and user administration all rejected; unknown bridge method rejected",
+    "playReleasePreview": "no errors; warnings for no selected testers and no deobfuscation file (release minification is disabled)",
+    "currentConnectedPhoneState": "locked; only com.sunswift.ula.debug returned by the package check; production retest awaits unlock and reinstall",
+    "studioRun": "pending; Android Studio is open on SunSwiftAndroidTest, not ULA-Android",
+    "pdfAndExcelSavedFiles": "pending",
+    "editorAndInstallerDeviceTests": "pending",
+    "cameraAndLocationDeviceTests": "pending",
     "runtime16KBDeviceTest": "pending",
     "privacyAndReleaseDeclarations": "not certified complete"
   }

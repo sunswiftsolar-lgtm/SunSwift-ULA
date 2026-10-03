@@ -73,9 +73,11 @@ The prior internal APK remains in the local `releases` folder. APKs, signing key
 - Release build, signed AAB/APK and release lint completed successfully (0 errors, 14 warnings).
 - The final APK passes 16 KB ZIP alignment. All bundled ARM64 and x86-64 native LOAD and RELRO segments pass strict checks in both the APK and AAB. A runtime test on a 16 KB device/emulator is still pending; the connected LAVA phone uses 4 KB pages.
 - The production Firebase client is `com.sunswift.ula`, app ID `1:422470553947:android:12a7a37254935aa8428a7e`, in the same `ula-dda9e` project. The genuine downloaded configuration includes production and debug clients. Public SHA-1/SHA-256 fingerprints for the local upload key and current Play app-signing key are registered.
-- The signed production APK was installed and launched on the connected phone without replacing the debug app. Production OTP/dashboard confirmation remains a user-assisted test until completed; the earlier admin checks above were on the debug app.
+- The signed production APK was installed and launched without replacing the debug app. The user subsequently reported completion of the production OTP/dashboard step; that is user-reported evidence, not an independently observed production test. On the later preflight, the phone was locked and only the debug package was present, so the production retest awaits unlock and reinstall. The earlier admin checks above were on the debug app.
 - Mandatory manual serial confirmation, model-unavailable fallback, cancellation and invalid input have automated regression checks.
 - Play Console accepted the signed AAB and saved release `1.5.0-web-v45.7 (6)` as **Draft** on the **Inactive** internal-testing track. No testing rollout, production release or tester invitations were made. Exact artifact hashes and non-secret signing fingerprints are recorded in `reference/play-release-6.json`.
+- The latest GitHub build [passed all checks](https://github.com/sunswiftsolar-lgtm/SunSwift-ULA/actions/runs/37118546530). Local bridge/control/serial regressions, strict AAB native alignment, APK ZIP alignment and immutable artifact hashes were rechecked successfully during the next preflight.
+- Play's release preview reports no errors and two warnings: no testers selected and no deobfuscation file. Release minification is disabled, so this build has no R8 mapping file. Approved tester emails, privacy-policy details and the outstanding user-assisted device checks are still pending.
 
 ## Important distribution note
 
@@ -85,4 +87,4 @@ On the original Windows account, `./scripts/build-play-release.ps1` builds the s
 
 The internal-testing draft bundle is Android `1.5.0-web-v45.7`, version code `6`. Public release/privacy declarations and the remaining device tests are not certified complete merely because Play accepts a draft upload.
 
-Upload only a signed release AAB to **ULA Data Management → Internal testing** and save it as a draft. Do not start a testing rollout or publish to production as part of this request.
+Distribution is **internal testing only**. The user authorized proceeding with the preflight and internal test on 3 October 2026, but no testers have been approved or selected yet. Activate only the internal track after the tester list and applicable release checks are ready. Do not publish to production or enable open testing without a separate explicit request.
