@@ -22,9 +22,12 @@ for (const style of asset.matchAll(/<style>([\s\S]*?)<\/style>/g)) {
   assert.ok(!/\b\d+(?:\.\d+)?(?:dvh|vh)\b/.test(style[1]), 'Android height limits must use measured viewport pixels');
 }
 const originalPath = path.join(root, 'reference/Index-45.7.html');
+const controls = html => [...html.matchAll(/<(?:input|select|textarea)\b[^>]*\bname=["']([^"']+)["']/g)].map(m => m[1]).sort();
+assert.ok(manifest.sourceControls?.length > 0, 'The reference control list must be included for CI');
+assert.deepEqual(controls(asset), manifest.sourceControls, 'All latest web form controls must be preserved on every build');
 if (fs.existsSync(originalPath)) {
   const original = fs.readFileSync(originalPath, 'utf8');
-  const controls = html => [...html.matchAll(/<(?:input|select|textarea)\b[^>]*\bname=["']([^"']+)["']/g)].map(m => m[1]).sort();
+  assert.deepEqual(controls(original), manifest.sourceControls, 'The control manifest must match the unmodified source');
   assert.deepEqual(controls(asset), controls(original), 'All latest web form controls must be preserved');
 }
 const helper = fs.readFileSync(path.join(root, 'backend/AndroidApi.gs'), 'utf8');

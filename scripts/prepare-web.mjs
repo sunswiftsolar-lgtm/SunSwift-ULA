@@ -48,6 +48,7 @@ adapted = adapted.replace(/<style>([\s\S]*?)<\/style>/g, (tag, css) =>
 const assets = path.join(root, 'app/src/main/assets');
 fs.mkdirSync(assets, {recursive:true});
 fs.writeFileSync(path.join(assets, 'ula-45.7.html'), adapted);
-const manifest = {webVersion:'45.7',androidVersion:'1.5.0',sourceSha256:crypto.createHash('sha256').update(source).digest('hex'),assetSha256:crypto.createHash('sha256').update(adapted).digest('hex'),deploymentId:config.deploymentId};
+const sourceControls = [...source.matchAll(/<(?:input|select|textarea)\b[^>]*\bname=["']([^"']+)["']/g)].map(match => match[1]).sort();
+const manifest = {webVersion:'45.7',androidVersion:'1.5.0',sourceSha256:crypto.createHash('sha256').update(source).digest('hex'),assetSha256:crypto.createHash('sha256').update(adapted).digest('hex'),sourceControls,deploymentId:config.deploymentId};
 fs.writeFileSync(path.join(root, 'reference/manifest.json'), JSON.stringify(manifest,null,2)+'\n');
 console.log(JSON.stringify({sourceBytes:Buffer.byteLength(source),assetBytes:Buffer.byteLength(adapted),...manifest},null,2));
