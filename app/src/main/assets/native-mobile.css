@@ -18,4 +18,6 @@
   .stat strong{font-size:18px}
   .stat span{font-size:10px}
   .status{left:12px;right:12px;bottom:12px}
+  /* Keep every modal inside the Android viewport, even on the long register page. */
+  dialog[open]{position:fixed;inset:0;margin:auto;max-height:90vh;overflow:auto}
 }

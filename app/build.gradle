@@ -37,10 +37,14 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file('../.android-home/debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            // Keep this workstation's Firebase test identity. CI uses its own standard debug key.
+            def workstationKey = file('../.android-home/debug.keystore')
+            if (workstationKey.exists()) {
+                storeFile workstationKey
+                storePassword 'android'
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+            }
         }
     }
 
