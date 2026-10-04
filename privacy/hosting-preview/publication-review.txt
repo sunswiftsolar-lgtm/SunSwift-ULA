@@ -41,8 +41,9 @@ Pending policy decisions and implementation checks:
   operation, annual project-record reviews and request handling are unverified.
 - Native phone-auth disclosure/consent and policy links before/after login are
   implemented in signed Android 1.5.1 (code 7). Build/source checks pass. Initial
-  login and OTP privacy links were observed on the phone; logged-in external
-  policy-link verification still awaits user assistance. The Play internal draft
+  login and OTP privacy links were observed on the phone. The owner subsequently
+  confirmed yes it opens for the logged-in footer link; that result is user-reported,
+  not an independently captured external-browser test. The Play internal draft
   now contains build 7; no rollout or review submission was made.
 - The owner approved the wording and then explicitly authorized publication
   at https://ula-dda9e-privacy.web.app/ on 4 October 2026. Publication is complete.

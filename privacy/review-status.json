@@ -51,7 +51,7 @@
   },
   "draftFile": "privacy-policy-draft.html",
   "operatingPlanFile": "manual-retention-plan.html",
-  "status": "public privacy policy saved in Play Console and linked in signed Android build 7; internal draft saved without rollout, logged-in link verification pending",
+  "status": "public privacy policy saved in Play Console and linked in signed Android build 7; owner confirmed logged-in link opens; internal draft saved without rollout",
   "policyWordingApproved": true,
   "policyWordingApprovalDate": "2026-10-04",
   "policyWordingApprovalSource": "User explicitly stated: policy wording approved.",
@@ -130,14 +130,15 @@
     "playDraftSaved": true,
     "reviewSubmittedOrRolledOut": false,
     "githubCodeChecks": "passed: https://github.com/sunswiftsolar-lgtm/SunSwift-ULA/actions/runs/37178017316",
-    "runtimeVerification": "Installed and launched on connected LAVA phone; initial login disclosure/unchecked consent/policy link and OTP-screen link/countdown observed. An intermediate UI dump showed the native footer and a WebView, but the next screenshot was at login. Successful authenticated external-policy opening remains unverified."
+    "runtimeVerification": "Installed and launched on connected LAVA phone; initial login disclosure/unchecked consent/policy link and OTP-screen link/countdown observed. Owner explicitly replied yes it opens after the request to finish OTP and tap the logged-in policy link. Successful logged-in opening is user-reported, not independently captured in the external browser.",
+    "ownerLinkOpeningConfirmedDate": "2026-10-04"
   },
   "remainingChecks": [
     "Verify operation of selected manual active/archived record review and activity-log retention procedure",
     "Future scheduled backup execution at the newly saved 90-day setting has not yet been observed; no cleanup run is required for this change",
     "Review any existing outside report recipients and document approvals",
     "Verified-request workflow including Firebase account deletion and retention exceptions",
-    "Runtime verification of the Android phone-authentication disclosure, consent gate and in-app policy link",
+    "Independent external-browser capture of the logged-in policy link is not available; owner confirmed successful opening",
     "Remaining Play app-content declarations and device checks are not certified complete; do not publish the release automatically"
   ]
 }
