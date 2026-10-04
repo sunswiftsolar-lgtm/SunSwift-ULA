@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>ULA Administrator Privacy and Retention Plan</title>
+  <style>
+    body { font: 16px/1.65 system-ui, sans-serif; color: #17324d; background: #f4f6f9; margin: 0; }
+    main { max-width: 760px; margin: 24px auto; padding: 28px; background: white; border: 1px solid #d8e0e9; border-radius: 12px; }
+    h1 { font-size: 1.65rem; line-height: 1.3; } h2 { font-size: 1.2rem; margin-top: 24px; }
+    li { margin: 8px 0; } a { color: #1756a0; overflow-wrap: anywhere; }
+    .notice { background: #fff6e7; border: 1px solid #e9c47e; padding: 14px; border-radius: 8px; }
+    @media (max-width: 600px) { main { margin: 0; border: 0; border-radius: 0; padding: 20px; } }
+  </style>
+</head>
+<body><main>
+  <h1>ULA Administrator Privacy and Retention Plan</h1>
+  <p>SunSwift Solar · Internal operating plan · 4 October 2026</p>
+  <p class="notice"><strong>No manual deletion is authorized by this document.</strong> This plan assigns a review process; it does not create a scheduled task, change permissions, send messages, disable backups or purge data. Separately, the user confirmed extension of the existing daily-backup rotation setting to 90 days on 4 October 2026; it was saved without running the job. Obtain separate approval for actual manual removal or irreversible action.</p>
+
+  <h2>Ownership and routine sharing</h2>
+  <p>The ULA administrator manages reviews and exceptions. Privacy and deletion requests go to <a href="mailto:santosh.jeypore@gmail.com">santosh.jeypore@gmail.com</a>. Routine access is limited to authorized staff and the necessary Google services, including Firebase, Apps Script, Sheets, Drive, Maps and ML Kit support. No new outside recipient is authorized.</p>
+  <p>Before sharing an exported report outside the office, record the administrator's approval, named recipient, purpose and minimum fields needed. Do not send the entire consumer database merely because a smaller report would be sufficient. The app cannot control copies after a user exports them.</p>
+
+  <h2>Monthly manual review</h2>
+  <ul>
+    <li>Review activity entries older than 12 months. Identify any documented audit, investigation or legal reason for retention; prepare a scoped deletion or anonymization proposal for entries no longer needed.</li>
+    <li>Review backup dates, accessibility and documented exceptions. After the user's separate confirmation, the existing daily job is now configured to move backup-folder files older than 90 days to Drive Trash. The setting was saved and verified after reload; the next scheduled execution at 90 days has not yet been observed.</li>
+    <li>Check that the existing daily backup job remains healthy. Do not run it merely to test this plan, because its current implementation also moves older files to Trash.</li>
+    <li>Keep any verified deletion decisions available to the administrator so a later database restore does not silently reintroduce information approved for deletion.</li>
+  </ul>
+
+  <h2>Annual record review</h2>
+  <p>Review active records, archived removed records and related images against project, warranty/service and accounting or legal needs. Keep required records; document the reason for any exception. Prepare a scoped proposal to remove or anonymize information no longer needed. Do not use a blanket purge or reset the live register.</p>
+
+  <h2>Privacy and deletion requests</h2>
+  <ol>
+    <li>Record receipt and aim to review and respond within 30 days. Verify the requester using an appropriate existing channel; never ask for passwords, OTPs or recovery codes.</li>
+    <li>Identify the requested ULA account or record and related active rows, Deleted Records snapshots, audit comments, images, backups and Firebase authentication information. Collect only what is needed for verification.</li>
+    <li>Check any documented reason to retain particular information. Explain the decision and any exceptions to the requester; disabling access alone is not full account or data deletion.</li>
+    <li>Only after separate approval, complete the scoped changes in the relevant systems and verify their outcome. Account removal from ULA must not be assumed to delete the Firebase account. Removal from the active register currently creates a Deleted Records snapshot.</li>
+    <li>Explain remaining backup or provider-controlled copies and their applicable retention. Do not promise that ULA can instantly erase Google-controlled abuse-prevention records or reports already distributed outside the app.</li>
+  </ol>
+
+  <h2>Publication and implementation status</h2>
+  <p>The approved policy was published on 4 October 2026 at <a href="https://ula-dda9e-privacy.web.app/">https://ula-dda9e-privacy.web.app/</a> and verified through an anonymous HTTPS request and the browser. Only the policy page and robots.txt were uploaded; internal plans and review metadata were confirmed absent from the public site. The URL is now saved in Play Console without review submission or rollout. Android 1.5.1 includes policy links before and after login and unchecked phone-verification consent; device verification is in progress. The existing backup configuration has been extended from 30 to 90 days with explicit user confirmation. No manual backup or cleanup was run, and the daily trigger was not changed. Actual log retention, annual reviews and request-handling execution have not been verified. This plan is not a compliance certification.</p>
+</main></body>
+</html>

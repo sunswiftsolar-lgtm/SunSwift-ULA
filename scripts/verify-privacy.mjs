@@ -1,0 +1,27 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+
+const root = path.resolve(import.meta.dirname, '..');
+const source = name => fs.readFileSync(path.join(root, 'app/src/main/java/com/sunswift/ula', name), 'utf8');
+const main = source('MainActivity.kt');
+const web = source('UlaWebScreen.kt');
+const privacy = source('PrivacyPolicy.kt');
+assert.match(privacy, /ULA_PRIVACY_POLICY_URL = "https:\/\/ula-dda9e-privacy\.web\.app\/"/);
+assert.match(privacy, /Intent\(Intent\.ACTION_VIEW, Uri\.parse\(ULA_PRIVACY_POLICY_URL\)\)/);
+assert.ok(!privacy.includes('sessionToken'), 'The public policy link must not transmit ULA credentials');
+assert.match(privacy, /stores and uses phone numbers for spam and abuse prevention/);
+assert.match(main, /privacyConsent by rememberSaveable \{ mutableStateOf\(false\) \}/);
+assert.match(main, /if \(updatedMobile != mobile\) privacyConsent = false/);
+const login = main.slice(main.indexOf('private fun NativePhoneLogin('), main.indexOf('private fun UlaShell('));
+assert.ok(login.includes('PrivacyPolicyLink('), 'Policy must be accessible before sign-in');
+assert.ok(web.includes('PrivacyPolicyLink('), 'Policy must remain accessible to all authenticated roles');
+assert.match(web, /modifier = Modifier\.fillMaxWidth\(\)\.weight\(1f\)/);
+assert.match(login, /enabled = !loading && privacyConsent && mobile\.length == 10/);
+assert.ok(login.indexOf('if (!privacyConsent)') < login.indexOf('val access = checkLoginMobile(mobile)'));
+assert.ok(login.indexOf('!access.authorized') < login.indexOf('PhoneAuthProvider.verifyPhoneNumber('));
+assert.match(login, /enabled = !loading && !otpExpired && otp\.length == 6/);
+assert.match(main, /OTP_VALIDITY_SECONDS = 300/);
+assert.match(web, /setOf\(ASSET_ORIGIN\)/, 'Do not grant the public policy site access to the authenticated bridge');
+assert.ok(!web.includes('loadUrl(ULA_PRIVACY_POLICY_URL)'), 'The public policy must not replace the authenticated WebView');
+console.log('PASS: public policy link before/after login; unchecked consent gate before preflight/SMS; authorization and OTP-expiry guards; bridge isolation.');

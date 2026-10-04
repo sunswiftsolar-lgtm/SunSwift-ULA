@@ -25,7 +25,7 @@ adapted = replaceOnce(adapted, /    async function initAuth\(\)\{[\s\S]*?(?=    
 adapted = replaceOnce(adapted, /    async function signOut\(expired=false\)\{[\s\S]*?(?=    function wireAuthEvents)/,
   `    async function signOut(expired=false){clearStoredSession();await UlaNative.request('logout',{expired})}\n`);
 adapted = adapted.replace("localStorage.setItem(AUTH_STORAGE_KEY,JSON.stringify(session));", '// The native app owns the session; do not duplicate credentials in web storage.');
-adapted = adapted.replace("versionBadge.textContent='Version 45.7'", "versionBadge.textContent='Android 1.5.0 · Web 45.7'");
+adapted = adapted.replace("versionBadge.textContent='Version 45.7'", "versionBadge.textContent='Android 1.5.1 · Web 45.7'");
 adapted = replaceOnce(adapted, /    async function confirmPhotoSerial\(file,type\)\{[\s\S]*?(?=    async function captureConsumerPhoto)/,
   `    async function confirmPhotoSerial(file,type){
       if(!PHOTO_SERIAL_FIELDS[type])return '';
@@ -50,6 +50,6 @@ const assets = path.join(root, 'app/src/main/assets');
 fs.mkdirSync(assets, {recursive:true});
 fs.writeFileSync(path.join(assets, 'ula-45.7.html'), adapted);
 const sourceControls = [...source.matchAll(/<(?:input|select|textarea)\b[^>]*\bname=["']([^"']+)["']/g)].map(match => match[1]).sort();
-const manifest = {webVersion:'45.7',androidVersion:'1.5.0',sourceSha256:crypto.createHash('sha256').update(source).digest('hex'),assetSha256:crypto.createHash('sha256').update(adapted).digest('hex'),sourceControls,deploymentId:config.deploymentId};
+const manifest = {webVersion:'45.7',androidVersion:'1.5.1',sourceSha256:crypto.createHash('sha256').update(source).digest('hex'),assetSha256:crypto.createHash('sha256').update(adapted).digest('hex'),sourceControls,deploymentId:config.deploymentId};
 fs.writeFileSync(path.join(root, 'reference/manifest.json'), JSON.stringify(manifest,null,2)+'\n');
 console.log(JSON.stringify({sourceBytes:Buffer.byteLength(source),assetBytes:Buffer.byteLength(adapted),...manifest},null,2));

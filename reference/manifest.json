@@ -1,8 +1,8 @@
 {
   "webVersion": "45.7",
-  "androidVersion": "1.5.0",
+  "androidVersion": "1.5.1",
   "sourceSha256": "e1f9daf4e5a494711c9c167cb70a377c3190fce9a1ca4f88f8667b1547bbbd6b",
-  "assetSha256": "8296440cbac4016bebee1d7b5427df28eb6a0c7f53a7443e76fb8629a77f3aa0",
+  "assetSha256": "15d2e7ac8ef3f85255e367f3a6204459c132110334dfca951ff5bec2d0416252",
   "sourceControls": [
     "billSubmitted",
     "consumerName",

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Privacy policy for ULA Data Management, operated by SunSwift Solar.">
+  <title>ULA Data Management — Privacy Policy</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, -apple-system, sans-serif; color: #21354b; background: #f3f6fa; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-size: 16px; line-height: 1.65; }
+    main { max-width: 840px; margin: 32px auto; padding: 36px; border: 1px solid #d9e2ec; border-radius: 16px; background: #fff; }
+    .brand { color: #ad492e; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+    h1 { font-size: 2rem; line-height: 1.25; margin: 8px 0; }
+    h2 { font-size: 1.2rem; margin: 28px 0 8px; }
+    p { margin: 10px 0; }
+    ul { padding-left: 24px; }
+    li { margin: 8px 0; }
+    a { color: #17589b; overflow-wrap: anywhere; text-underline-offset: 3px; }
+    .subtle { color: #55697f; }
+    .contact { margin-top: 24px; padding: 18px; border-radius: 10px; background: #f1f6fb; }
+    footer { margin-top: 28px; padding-top: 18px; border-top: 1px solid #d9e2ec; font-size: .9rem; }
+    @media (max-width: 600px) { main { margin: 0; padding: 22px 18px; border: 0; border-radius: 0; } h1 { font-size: 1.6rem; } }
+    @media print { :root { background: #fff; } main { border: 0; margin: 0; max-width: none; padding: 12px; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="brand">SunSwift Solar</p>
+    <h1>ULA Data Management Privacy Policy</h1>
+    <p class="subtle">Effective date: 4 October 2026</p>
+  </header>
+
+  <section aria-labelledby="purpose">
+    <h2 id="purpose">1. Who we are and who can use ULA</h2>
+    <p>SunSwift Solar operates ULA Data Management for internal consumer registration, solar surveys and installations, payments, installation evidence and office reporting.</p>
+    <p>The application is intended only for authorized adult office staff. An administrator authorizes users and assigns roles and location scopes. Those permissions control access to office records. Inclusion in a Google Play testing list does not authorize access to ULA records.</p>
+  </section>
+
+  <section aria-labelledby="information">
+    <h2 id="information">2. Information the application handles</h2>
+    <ul>
+      <li><strong>Office accounts:</strong> user name, mobile number, role, authorization status, assigned locations and authentication/session information.</li>
+      <li><strong>Consumer and project records:</strong> consumer name, mobile number, electricity consumer and reference numbers, division, sub-division, section, panchayat, village, registration and survey details, payment amounts and dates, installer names, installation dates, equipment serial numbers, warehouse/site distances and related details entered by staff.</li>
+      <li><strong>Installation evidence:</strong> selected or captured images, confirmed equipment serial numbers, latitude, longitude, location accuracy and description, capture time and uploading user. Saved images can visibly contain consumer, location, time and user details stamped on them.</li>
+      <li><strong>Activity history:</strong> user, action, time, affected record and change comments, including recorded before and after field values. Change history can contain personal information.</li>
+      <li><strong>Archived records:</strong> removing a record from the active register currently creates a full snapshot in the Deleted Records sheet with the removal time and administrator. Audit entries, images and backups can remain.</li>
+      <li><strong>Data on the device:</strong> session information, settings, temporary images and working copies. Reports saved using the Android file picker remain in the user's chosen location until removed there.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="uses">
+    <h2 id="uses">3. How information is used</h2>
+    <p>We use information to authenticate authorized staff, apply access restrictions, maintain the shared register, manage surveys and installation work, record payments, confirm equipment serial numbers, store installation evidence, generate reports and review changes or investigate errors and misuse.</p>
+    <p>SunSwift Solar does not sell personal information or use it for advertising.</p>
+  </section>
+
+  <section aria-labelledby="services">
+    <h2 id="services">4. Phone verification and Google services</h2>
+    <p>Phone verification uses Google Firebase Authentication. The phone number entered for verification is sent to Google, which states that it also stores and uses these numbers for spam and abuse prevention across its services. Authentication can also involve technical information such as IP address and user-agent information. Users must be informed about this processing and provide the appropriate consent before phone verification starts.</p>
+    <p>The office backend uses Google Apps Script, Google Sheets for records and archives, and Google Drive for installation images and database backups. When obtaining a location description or saving a geo-tagged installation image, coordinates are sent to the backend. Location descriptions are obtained through the Google Maps geocoder in Apps Script.</p>
+    <p>Google ML Kit performs barcode and text recognition on the device. It does not send recognition input images or recognized output to Google for that recognition. ULA's separate upload workflow sends the prepared installation image and related information to the office backend. ML Kit can obtain models and updates from Google and send performance and utilization metrics.</p>
+    <p>See the <a href="https://policies.google.com/privacy">Google Privacy Policy</a>, <a href="https://firebase.google.com/support/privacy">Firebase privacy information</a>, <a href="https://firebase.google.com/docs/auth/android/phone-auth">Firebase phone-authentication information</a> and <a href="https://developers.google.com/ml-kit/terms">ML Kit terms and privacy information</a>.</p>
+  </section>
+
+  <section aria-labelledby="permissions">
+    <h2 id="permissions">5. Images, location and device permissions</h2>
+    <p>When a user chooses to add an installation image, the Android application opens the system camera or image picker. ULA does not declare its own camera permission; the camera application may have its own permission requirements.</p>
+    <p>ULA requests foreground location permission when needed for the user-initiated geo-tagged installation-image workflow. It does not continuously track location in the background. Users can decline or revoke location permission in Android settings, but the geo-tagged image workflow then cannot complete.</p>
+    <p>The application does not request access to contacts, the SMS inbox, microphone or background location. Reports are saved through the Android file picker rather than broad storage permission.</p>
+  </section>
+
+  <section aria-labelledby="sharing">
+    <h2 id="sharing">6. Access and sharing</h2>
+    <p>Routine access is restricted to authorized office staff according to their permissions and to the Google services needed for authentication, processing, storage, location descriptions and recognition support.</p>
+    <p>Staff can export reports or images. Distribution outside the office requires the administrator's approval of the recipient, purpose and minimum necessary information. The application cannot control an exported file after it is saved or distributed. Information may also be disclosed when necessary to meet applicable legal obligations.</p>
+  </section>
+
+  <section aria-labelledby="security">
+    <h2 id="security">7. Security and user responsibilities</h2>
+    <p>ULA uses HTTPS connections and server-side authorization checks. The Android interface bridge is restricted to the bundled interface, and Android app backup is disabled. No safeguard provides absolute security.</p>
+    <p>Staff should protect their devices and exported reports, avoid sharing OTPs and sign out when appropriate. Signing out, disabling a user or uninstalling the application does not itself erase cloud records, images, Firebase authentication information or exported files.</p>
+  </section>
+
+  <section aria-labelledby="retention">
+    <h2 id="retention">8. Retention and removal</h2>
+    <p>SunSwift Solar has selected administrator-managed reviews for its office retention schedule:</p>
+    <ul>
+      <li><strong>Consumer, installation and payment records and evidence:</strong> retained while needed for projects, warranty/service commitments and applicable accounting or legal obligations. Review at least annually and identify information that can be removed or anonymized when those purposes end. There is no single fixed retention period for all project records.</li>
+      <li><strong>Activity history:</strong> the approved ordinary retention period is 12 months. Specific entries may need longer retention for a documented audit, investigation or legal obligation. Record-level creation/modification metadata follows the record's retention. Execution of the manual log review has not yet been verified.</li>
+      <li><strong>Database backups:</strong> the existing daily-backup job is now configured to move files in its backup folder older than 90 days to Google Drive Trash. Trash handling is subject to Google's service behavior. The saved configuration has been verified; execution of the next scheduled backup at this setting has not yet been observed. Exceptional retention needs should be documented, and a restore must not silently reverse an approved deletion.</li>
+    </ul>
+    <p>Removal from the active register is not removal of every copy: archived record snapshots, audit entries, Drive images, backups and exported files must be considered separately. Provider-controlled technical and abuse-prevention information follows the provider's terms and may have different retention periods.</p>
+  </section>
+
+  <section aria-labelledby="requests">
+    <h2 id="requests">9. Privacy, correction and deletion requests</h2>
+    <p>Contact <a href="mailto:santosh.jeypore@gmail.com?subject=ULA%20privacy%20request">santosh.jeypore@gmail.com</a> with your request and enough information to identify the relevant office account or consumer record. Do not send passwords, OTPs or recovery codes.</p>
+    <p>Our selected process is manual administrator review. The administrator verifies the request through an appropriate existing channel, identifies related active and archived ULA records, audit entries, images, backups and Firebase information, and checks any documented reason for retention. We aim to review and respond within 30 days, explaining any necessary retention and applicable next steps.</p>
+    <p>Approved removal must be completed in the relevant systems, not merely by disabling login or removing a visible row. Shared project records may require different treatment from an individual's account data. ULA cannot promise immediate erasure of Google-controlled abuse-prevention records or independently distributed reports. Operation of the selected request-handling process has not yet been independently verified.</p>
+  </section>
+
+  <section aria-labelledby="policy-page">
+    <h2 id="policy-page">10. This page and policy updates</h2>
+    <p>The prepared policy page contains no sign-in form, analytics code or tracking scripts. When hosted on Firebase Hosting, viewing it requires your browser to request the page from Google's hosting service.</p>
+    <p>We will update the published policy when the application's data practices change. The effective date will be shown at the top after publication is approved.</p>
+  </section>
+
+  <section class="contact" aria-labelledby="contact">
+    <h2 id="contact">Contact SunSwift Solar</h2>
+    <p>Privacy, support and deletion requests: <a href="mailto:santosh.jeypore@gmail.com">santosh.jeypore@gmail.com</a><br>Phone: <a href="tel:+919517357666">+91 9517357666</a><br>Company website: <a href="https://sunswiftsolar.com">sunswiftsolar.com</a></p>
+  </section>
+  <footer class="subtle">Policy basis: Android 1.5.0-web-v45.7, version code 6, and inspected ULA backend. Publication of this policy does not certify legal compliance or complete device testing.</footer>
+</main>
+</body>
+</html>

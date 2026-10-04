@@ -1,0 +1,55 @@
+ULA PRIVACY POLICY PUBLICATION RECORD
+Published and verified 4 October 2026.
+
+Requested provider: Firebase Hosting in existing project ula-dda9e.
+The Firebase console is accessible under the company account and currently
+showed Get started at hosting/sites/ula-dda9e during preparation. A read-only
+Firebase CLI site list confirmed the existing default site ula-dda9e. A separate
+empty site ula-dda9e-privacy was then created after tool approval. The CLI
+returned https://ula-dda9e-privacy.web.app. Following the user's explicit yes to
+publication at this exact address, only index.html and robots.txt were deployed
+to this dedicated site. No permission, database/authentication, billing, app
+binary or Google Play release change was performed during policy publication.
+
+public/ contains only the approved published policy and robots.txt. It must not contain
+office records, credentials, private metadata, activity data or internal plans.
+The web page has no Firebase SDK, JavaScript, forms, analytics or database calls.
+
+firebase.review.json was used for the authorized Hosting-only deployment. Its
+site property points directly to the dedicated site ula-dda9e-privacy; no logical
+target mapping is used. The CLI reported release complete and Deploy complete.
+The default site and authentication domains were not changed. Future material
+policy changes require approval; never deploy databases/rules/functions as part
+of this policy site. The effective date is 4 October 2026.
+
+Independent public checks passed:
+- Anonymous HTTPS request returned 200 and text/html; charset=utf-8.
+- The 11 substantive sections matched the approved SHA256 exactly:
+  dcfb68eaa672d156c064c645e4cfd3e92159e81c7d2ddefc3c8c1900b891f9c1
+- The effective date, no active forms/scripts, CSP and nosniff headers passed.
+- review-status.json, firebase.review.json and manual-retention-plan.html each
+  returned HTTP 404 from the public site.
+- The browser showed ULA Data Management — Privacy Policy, the effective date
+  and the approved support contacts. Screenshot: test-results/privacy-policy-published.png.
+
+Pending policy decisions and implementation checks:
+- The user explicitly confirmed the 90-day change on 4 October 2026. Only the
+  backupRetentionDays setting was changed from 30 to 90 in Code.gs, saved and
+  verified after an editor reload. The existing Head trigger was not edited.
+  No manual backup/cleanup was run. Future scheduled execution is unobserved.
+- Manual activity-history retention is approved at 12 months but actual
+  operation, annual project-record reviews and request handling are unverified.
+- Native phone-auth disclosure/consent and policy links before/after login are
+  implemented in signed Android 1.5.1 (code 7). Build/source checks pass. Initial
+  login and OTP privacy links were observed on the phone; logged-in external
+  policy-link verification still awaits user assistance. The Play internal draft
+  now contains build 7; no rollout or review submission was made.
+- The owner approved the wording and then explicitly authorized publication
+  at https://ula-dda9e-privacy.web.app/ on 4 October 2026. Publication is complete.
+  The Play privacy URL was saved on 4 October 2026. The UI showed Change saved.
+  Send for review in Publishing overview. No review submission or rollout was made.
+
+Do not delete records/backups or run cleanup functions to prepare this page.
+Do not claim the Play policy field or app privacy access is complete merely
+because Hosting publication succeeded. Do not activate a Play release as a
+consequence of hosting this policy.

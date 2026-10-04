@@ -16,6 +16,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.background
 import androidx.compose.material3.Text
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -112,7 +113,7 @@ fun UlaWebScreen(state: UlaAppState, onLogout: () -> Unit) {
     Column(Modifier.fillMaxSize().background(Color(0xFF17324D)).safeDrawingPadding()) {
         error?.let { Text(it, modifier = Modifier.padding(16.dp)) }
         AndroidView(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxWidth().weight(1f),
             factory = {
                 WebView(context).apply {
                     webView = this
@@ -246,6 +247,11 @@ fun UlaWebScreen(state: UlaAppState, onLogout: () -> Unit) {
                 }
             }
         )
+        Surface(color = Color.White) {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                PrivacyPolicyLink()
+            }
+        }
     }
 }
 

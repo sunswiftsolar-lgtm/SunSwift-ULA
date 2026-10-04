@@ -1,10 +1,12 @@
 # SunSwift ULA Android
 
-Android 1.5.0, based on the previous native Android 1.4.0 application and the deployed ULA web application Version 45.7.
+Android 1.5.1, based on the previous native Android 1.4.0 application and the deployed ULA web application Version 45.7.
 
 ## Application behavior
 
 - Uses Firebase mobile OTP login with a five-minute OTP expiry.
+- Provides the public [Privacy Policy](https://ula-dda9e-privacy.web.app/) before login, on the OTP screen and in a native footer after login. The policy opens in an external browser without the ULA session token or authenticated bridge.
+- Displays Firebase phone-verification and abuse-prevention disclosure with unchecked consent required before requesting an OTP. Changing the mobile number resets consent; authorized-user and OTP-expiry checks remain unchanged.
 - Checks the live ULA authorized-user list before requesting an OTP; unlisted or inactive users are denied access.
 - Re-validates authorization on the server when creating an app session.
 - Supports the current Admin, Editor and Installer roles, using the server's permissions.
@@ -51,6 +53,7 @@ Verify bundled UI parity and the bridge before building:
 
 ```text
 node scripts/verify-web.mjs
+node scripts/verify-privacy.mjs
 ```
 
 `scripts/prepare-web.mjs` rebuilds the asset from a locally downloaded Apps Script HTML response saved as `reference/web-45.7-response.html`. Original source hashes are recorded in `reference/manifest.json`. The adapter changes authentication, native API transport, file saving and serial scanning only; all form controls remain unchanged.
@@ -77,7 +80,7 @@ The prior internal APK remains in the local `releases` folder. APKs, signing key
 - Mandatory manual serial confirmation, model-unavailable fallback, cancellation and invalid input have automated regression checks.
 - Play Console accepted the signed AAB and saved release `1.5.0-web-v45.7 (6)` as **Draft** on the **Inactive** internal-testing track. No testing rollout, production release or tester invitations were made. Exact artifact hashes and non-secret signing fingerprints are recorded in `reference/play-release-6.json`.
 - The latest GitHub build [passed all checks](https://github.com/sunswiftsolar-lgtm/SunSwift-ULA/actions/runs/37118546530). Local bridge/control/serial regressions, strict AAB native alignment, APK ZIP alignment and immutable artifact hashes were rechecked successfully during the next preflight.
-- Play's release preview reports no errors and two warnings: no testers selected and no deobfuscation file. Release minification is disabled, so this build has no R8 mapping file. Approved tester emails, privacy-policy details and the outstanding user-assisted device checks are still pending.
+- The original code-6 release preview reported no errors and warnings for no testers and no deobfuscation file. Release minification is disabled, so this build has no R8 mapping file. The five owner-provided tester accounts were subsequently saved/selected; no invitation or rollout was sent. The outstanding user-assisted device checks remain pending.
 
 ## Important distribution note
 
@@ -85,6 +88,16 @@ The debug APK (`com.sunswift.ula.debug`) is suitable only for controlled testing
 
 On the original Windows account, `./scripts/build-play-release.ps1` builds the signed release using `.signing/ula-upload.p12` and a Windows-DPAPI-encrypted password. Both are excluded from Git. Keep a secure recoverable backup of the key and its password outside GitHub; DPAPI alone is tied to this Windows account. Never commit signing credentials or place them in CI logs.
 
-The internal-testing draft bundle is Android `1.5.0-web-v45.7`, version code `6`. Public release/privacy declarations and the remaining device tests are not certified complete merely because Play accepts a draft upload.
+The current internal-testing draft bundle is Android `1.5.1-web-v45.7`, version code `7`. Public release/privacy declarations and the remaining device tests are not certified complete merely because Play accepts a draft upload.
 
-Distribution is **internal testing only**. The user authorized proceeding with the preflight and internal test on 3 October 2026, but no testers have been approved or selected yet. Activate only the internal track after the tester list and applicable release checks are ready. Do not publish to production or enable open testing without a separate explicit request.
+Distribution is **internal testing only**. The user authorized the internal-testing preparation and provided five tester accounts, now saved/selected. Activate only the internal track after applicable release checks are ready. Do not publish to production or enable open testing without a separate explicit request.
+
+## Privacy update on 4 October 2026
+
+- Only the approved public policy and robots.txt were published to the dedicated Firebase Hosting site `ula-dda9e-privacy`. No office records, internal plans or credentials were uploaded.
+- Play Console saved `https://ula-dda9e-privacy.web.app/` in the Privacy policy field and displayed “Change saved. Send for review in Publishing overview.” No review submission or rollout was performed.
+- Android 1.5.1, version code 7, adds public policy links and phone-authentication consent. Source regressions, signed release build and release lint pass (0 errors, 15 warnings). APK ZIP and APK/AAB ARM64/x86-64 LOAD/RELRO alignment pass. The upload certificate is unchanged.
+- The signed APK was installed and launched on the connected LAVA phone without removing its debug app or data. The initial login showed the policy link, disclosure, unchecked consent and disabled Send OTP. The user-operated OTP screen showed the policy link and expiry countdown. The logged-in link still awaits user-assisted verification; no SMS was requested by the agent and no office records were modified.
+- Play accepted build 7 and saved the existing internal-testing draft with updated release notes. Code 6 was removed only from this draft and remains recoverable in Play's artifact library and the local immutable copies. No rollout or review submission was made. Exact hashes and remaining checks are recorded in `reference/play-release-7.json`.
+- The existing daily-backup Head setting was changed from 30 to the separately approved 90 days, saved and verified after reload. The existing trigger was not changed or run manually. Actual future execution, manual log retention and verified deletion-request handling remain unverified.
+- Remaining Play declarations and device checks are not certified complete merely because the policy is public or its URL is saved. The original code-6 immutable artifacts and release metadata are preserved.

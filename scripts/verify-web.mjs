@@ -16,7 +16,7 @@ for (const match of asset.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
 assert.ok(scripts >= 3, 'Expected the complete UI and embedded report libraries');
 assert.ok(!asset.includes('src="https://www.gstatic.com/firebasejs/'), 'Native Firebase must own authentication');
 assert.ok(asset.includes("UlaNative.request('api',{method,args})"));
-assert.ok(asset.includes("Android 1.5.0 · Web 45.7"));
+assert.ok(asset.includes(`Android ${manifest.androidVersion} · Web ${manifest.webVersion}`));
 assert.ok(asset.includes('serial number was not confirmed'), 'Photo serial confirmation must remain required');
 for (const style of asset.matchAll(/<style>([\s\S]*?)<\/style>/g)) {
   assert.ok(!/\b\d+(?:\.\d+)?(?:dvh|vh)\b/.test(style[1]), 'Android height limits must use measured viewport pixels');

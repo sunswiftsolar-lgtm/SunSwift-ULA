@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Unpublished privacy policy draft for ULA Data Management, operated by SunSwift Solar.">
+  <title>ULA Data Management Privacy Policy Draft</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #17324d; background: #f4f6f9; }
+    body { margin: 0; line-height: 1.65; }
+    main { max-width: 780px; margin: 24px auto; padding: 28px; background: white; border: 1px solid #d8e0e9; border-radius: 14px; }
+    h1 { font-size: 1.8rem; line-height: 1.25; margin: 0 0 12px; }
+    h2 { margin: 28px 0 8px; font-size: 1.2rem; }
+    p { margin: 10px 0; }
+    li { margin: 6px 0; }
+    a { color: #1756a0; overflow-wrap: anywhere; }
+    .notice { padding: 16px; background: #fff6e7; border: 1px solid #e9c47e; border-radius: 8px; }
+    .meta { color: #526477; }
+    .proposal { border-left: 4px solid #ba741b; padding-left: 16px; }
+    @media (max-width: 600px) { main { margin: 0; border: 0; border-radius: 0; padding: 20px; } h1 { font-size: 1.5rem; } }
+    @media print { :root { background: white; } main { margin: 0; max-width: none; border: 0; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>ULA Data Management Privacy Policy Draft</h1>
+    <p class="meta">Operator: SunSwift Solar · Prepared for review on 4 October 2026</p>
+    <p>Privacy, support and deletion contact: <a href="mailto:santosh.jeypore@gmail.com">santosh.jeypore@gmail.com</a></p>
+    <p>Support phone: <a href="tel:+919517357666">+91 9517357666</a> · Company website: <a href="https://sunswiftsolar.com">sunswiftsolar.com</a></p>
+  </header>
+
+  <aside class="notice" aria-label="Draft status">
+    <strong>Unpublished draft — not an effective policy.</strong>
+    <p>This file is the internal working draft. The separately approved public policy was published on 4 October 2026 at <a href="https://ula-dda9e-privacy.web.app/">https://ula-dda9e-privacy.web.app/</a>. This internal draft and its publication checklist were not uploaded.</p>
+    <p>SunSwift Solar, the contact details and the retention periods below are approved. Retention approval was received on 4 October 2026. Following the operator's request to choose suitable arrangements, this draft selects manual administrator-managed retention and restricted sharing. Actual operation of those procedures has not yet been verified, and other publication checks remain open. This document does not change the app, the live database, backups or Google Play release status.</p>
+  </aside>
+
+  <h2>Purpose and access</h2>
+  <p>ULA Data Management is an internal office application for consumer registration, solar installation work, payments, installation evidence and reports. It uses the existing ULA cloud register. Only users authorized by an administrator can access office records; access depends on their assigned role and location scope. Being a Google Play tester does not itself authorize access to ULA data.</p>
+  <p>SunSwift Solar has confirmed that the application is intended only for authorized adult office staff, not for children or the general public.</p>
+
+  <h2>Information handled by the application</h2>
+  <ul>
+    <li><strong>Office user information:</strong> name, authorized mobile number, role, access status, assigned work locations and sign-in/session information.</li>
+    <li><strong>Consumer and work records:</strong> consumer name, mobile number, electricity consumer number, reference number, division, sub-division, section, panchayat, village, registration and survey details, payment amounts and dates, installer names, installation dates, equipment serial numbers, warehouse/site distances and related workflow details entered by authorized users.</li>
+    <li><strong>Installation evidence:</strong> images selected or captured by a user, confirmed equipment serial numbers, latitude, longitude, location accuracy, location description, capture time and the uploading user. A saved installation image can visibly include the consumer, location and user details stamped on it.</li>
+    <li><strong>Activity records:</strong> the user, action, time, affected record and recorded comments, including before and after values for changed fields. These values can themselves contain personal information.</li>
+    <li><strong>Archived removed records:</strong> the current backend keeps a full record snapshot, removal time and removing administrator in its Deleted Records sheet when a record is removed from the active register. Audit entries and separately stored images or backups may also remain. Removing a row from the active list is not deletion of every stored copy.</li>
+    <li><strong>Local app data:</strong> authentication/session information, interface settings, temporary images and working copies of records. Reports saved through the Android file picker remain in the location chosen by the user until removed there.</li>
+  </ul>
+
+  <h2>Why the information is used</h2>
+  <p>The app uses this information to authenticate authorized users, apply access restrictions, maintain the shared consumer register, manage surveys and installations, record payments, confirm equipment serial numbers, retain installation evidence, generate reports, and let administrators review changes and investigate errors or misuse.</p>
+
+  <h2>Phone verification and Google services</h2>
+  <p>Phone sign-in uses Google Firebase Authentication. The mobile number supplied for verification is sent to Google. Google states that these numbers are also stored and used for spam and abuse prevention across its services. Authentication can also involve technical information such as IP addresses and user-agent information. This processing must be disclosed to users before phone verification begins.</p>
+  <p>The application connects to Google Apps Script for its backend, uses Google Sheets for the live register and archived records, and Google Drive for installation images and database backups. GPS coordinates are sent to the backend when obtaining a location description and saving a geo-tagged installation image. The inspected backend uses Google Maps through the Apps Script Maps geocoder to obtain the location description.</p>
+  <p>Barcode and text recognition use Google ML Kit on the device. ML Kit does not send the input image or recognized output to Google for recognition; the ULA upload feature separately sends the prepared image and related information to the office backend. ML Kit can contact Google to obtain models and updates and sends performance and utilization metrics. These SDK activities are distinct from the office activity tracker.</p>
+  <p>Google's services have their own data-handling terms. See <a href="https://policies.google.com/privacy">Google Privacy Policy</a>, <a href="https://firebase.google.com/support/privacy">Firebase privacy information</a>, <a href="https://firebase.google.com/docs/auth/android/phone-auth">Firebase phone authentication information</a> and <a href="https://developers.google.com/ml-kit/terms">ML Kit privacy information</a>.</p>
+
+  <h2>Camera, images and location</h2>
+  <p>The current Android app opens the system camera or image picker when a user chooses to add an installation image. It does not declare its own camera permission; the selected camera application can have its own permission requirements.</p>
+  <p>Location is requested for the user-initiated geo-tagged image workflow, not for continuous background tracking. Android location permission is requested when needed. A user can decline or revoke that permission in Android settings, but the geo-tagged image workflow then cannot complete. Denying this feature does not grant access to other records or bypass user authorization.</p>
+  <p>The app does not request permission to read the user's contacts, SMS inbox, microphone or background location. It uses Android's file picker to save reports rather than requesting broad storage access.</p>
+
+  <h2>Who can receive information</h2>
+  <p>The selected sharing rule restricts routine access to authorized office users according to their permissions and to Google services used for authentication, backend processing, file storage and on-device recognition support. No additional routine external recipients are approved by this decision.</p>
+  <p>Authorized users can save reports or images. Outside distribution, including to a project authority or contractor, requires the administrator's approval of the recipient, purpose and necessary information. This is an office handling rule, not a claim that the app can technically control files after export. The administrator must document any such recipients before actual disclosures and keep this policy accurate. Information may also be disclosed where necessary to meet applicable legal obligations.</p>
+  <p>SunSwift Solar has confirmed that it does not sell personal data or use it for advertising. Selecting this restricted-sharing rule does not establish who may have received exports in the past.</p>
+
+  <h2>Security and user responsibilities</h2>
+  <p>The current app uses HTTPS connections and server-side authorization checks. Its Android bridge is restricted to the bundled interface. Android app backup is disabled for the app. Office account, Drive-sharing and database-backup safeguards also require operational review; this draft is not a certification of those settings or a promise of absolute security.</p>
+  <p>Users should protect their phones, avoid sharing OTPs, sign out when appropriate and protect any exported reports. Signing out or uninstalling the app does not by itself delete office records, cloud images, Firebase accounts or files already exported to other locations.</p>
+
+  <h2>Approved retention schedule</h2>
+  <div class="proposal">
+    <p><strong>Approved periods; manual administrator review selected.</strong> These are SunSwift Solar's approved operational choices, not periods mandated by Google Play. No new automatic deletion has been enabled. Following separate user confirmation on 4 October 2026, the existing daily-backup retention setting was extended from 30 to 90 days, saved and verified after an editor reload. No backup or cleanup function was run. Approval of this text is not an instruction to delete existing records or backups, and actual execution of the manual schedule remains unverified.</p>
+    <ul>
+      <li><strong>Consumer, installation and payment records and relevant evidence:</strong> retain while needed for the project, warranty/service commitments and applicable accounting or legal obligations. Review at least annually and remove or anonymize information when these purposes end. The applicable project, warranty and accounting requirements determine the duration; no fixed number of years has been approved.</li>
+      <li><strong>Activity logs:</strong> ordinarily retain for 12 months from the event, then delete or anonymize, unless specific entries remain necessary for a documented audit, investigation or legal obligation. Record-level created/modified metadata follows the retention of the record itself.</li>
+      <li><strong>Database backups:</strong> the existing daily-backup job is now configured for a rolling 90-day retention schedule. Its existing rotation code moves older files in its backup folder to Google Drive Trash. The saved configuration and unchanged Head trigger were verified; execution of the next scheduled backup at this setting has not yet been observed. No manual backup, cleanup or deletion was performed for this change. The administrator should review backups and documented exceptions manually; approved deletions must not be inadvertently reversed when restoring a backup.</li>
+      <li><strong>Privacy and deletion requests:</strong> aim to review and respond within 30 days of receiving a request. Verification may be needed before changing personal data. Explain any information that must be retained and the reason; do not treat disabling login alone as completion of a deletion request.</li>
+    </ul>
+    <p>Google service logs and abuse-prevention information can have different retention periods under Google's terms. The approved office schedule does not promise deletion of Google-controlled service records within 90 days.</p>
+  </div>
+
+  <h2>Privacy, correction and deletion requests</h2>
+  <p>Send requests concerning ULA Data Management to <a href="mailto:santosh.jeypore@gmail.com?subject=ULA%20privacy%20request">santosh.jeypore@gmail.com</a>. Describe the request and provide enough information to identify the relevant office account or consumer record. Do not email passwords, OTPs or recovery codes.</p>
+  <p>SunSwift Solar has approved this email as the privacy and deletion contact. The selected procedure is manual administrator review: verify the request using an appropriate existing channel, identify the related ULA active and archived records, audit entries, Google Drive images/backups and Firebase information, check any documented retention obligation, and respond within the approved 30-day target. The administrator must actually complete any approved deletion across the relevant systems; disabling ULA access alone is not account deletion. Requests should distinguish personal account data from shared project records, and any necessary retention must be explained rather than assumed. Operation of this procedure has not yet been independently verified.</p>
+
+  <h2>Items to resolve before publication</h2>
+  <ol>
+    <li>Assign and verify operation of the selected manual retention process, including annual active/archived record reviews and log retention. The daily-backup retention setting is now saved at 90 days; future scheduled execution at this setting has not yet been observed. Do not run a cleanup merely to prepare this policy.</li>
+    <li>Review any existing outside report recipients. Routine sharing is restricted to authorized staff and the necessary Google services, including Google Maps; other disclosures require administrator approval. The adult-office-staff audience and no-data-sale/no-advertising practices are confirmed.</li>
+    <li>Confirm how verified deletion requests are completed in ULA, Firebase and retained backups, rather than only removing authorization.</li>
+    <li>Verify or add phone-authentication disclosure/consent and an accessible privacy-policy link or text inside the Android app.</li>
+    <li>After approval, publish the final policy on a publicly accessible HTTPS page without requiring sign-in, exposing no office records. Add its verified URL to Play Console and set an effective date.</li>
+  </ol>
+  <p class="meta">Source check: Android 1.5.0-web-v45.7, version code 6, bundled web interface 45.7. Preparation of this draft does not complete device testing, publish the Android app or certify legal compliance.</p>
+</main>
+</body>
+</html>

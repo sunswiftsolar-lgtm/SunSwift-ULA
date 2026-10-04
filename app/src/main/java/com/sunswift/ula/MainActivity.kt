@@ -17,18 +17,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.text.font.FontWeight
@@ -57,7 +60,7 @@ private val UlaError = Color(0xFF9D2D20)
 private val UlaInk = Color(0xFF18212B)
 private val UlaMuted = Color(0xFF667085)
 private val UlaLine = Color(0xFFD8DEE6)
-private const val ANDROID_VERSION = "1.5.0"
+private const val ANDROID_VERSION = "1.5.1"
 private const val WEB_REFERENCE_VERSION = "45.7"
 private const val OTP_VALIDITY_SECONDS = 300
 
@@ -142,6 +145,7 @@ private fun NativePhoneLogin(
     onSignedIn: () -> Unit
 ) {
     var mobile by remember { mutableStateOf("") }
+    var privacyConsent by rememberSaveable { mutableStateOf(false) }
     var otp by remember { mutableStateOf("") }
     var verificationId by remember { mutableStateOf<String?>(null) }
     var loading by remember { mutableStateOf(false) }
@@ -256,11 +260,17 @@ private fun NativePhoneLogin(
                         fontSize = 14.sp
                     )
                     Spacer(Modifier.height(18.dp))
+                    PrivacyPolicyLink(Modifier.align(Alignment.End))
 
                     if (verificationId == null) {
                         OutlinedTextField(
                             value = mobile,
-                            onValueChange = { mobile = it.filter(Char::isDigit).take(10) },
+                            onValueChange = {
+                                val updatedMobile = it.filter(Char::isDigit).take(10)
+                                if (updatedMobile != mobile) privacyConsent = false
+                                mobile = updatedMobile
+                            },
+                            enabled = !loading,
                             label = { Text("Mobile number") },
                             leadingIcon = { Text("+91", fontWeight = FontWeight.Bold) },
                             keyboardOptions = KeyboardOptions(
@@ -271,9 +281,30 @@ private fun NativePhoneLogin(
                             modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(Modifier.height(16.dp))
+                        Text(ULA_PHONE_PRIVACY_DISCLOSURE, color = UlaMuted, fontSize = 12.sp)
+                        Row(
+                            modifier = Modifier.fillMaxWidth().toggleable(
+                                value = privacyConsent,
+                                enabled = !loading,
+                                role = Role.Checkbox,
+                                onValueChange = { privacyConsent = it }
+                            ).padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Checkbox(checked = privacyConsent, onCheckedChange = null, enabled = !loading)
+                            Spacer(Modifier.width(10.dp))
+                            Text(
+                                "I agree to the phone-verification processing and ULA Privacy Policy.",
+                                color = UlaInk, fontSize = 12.sp, modifier = Modifier.weight(1f)
+                            )
+                        }
                         Button(
                             onClick = {
                                 keyboard?.hide()
+                                if (!privacyConsent) {
+                                    message = "Read the Privacy Policy and agree to phone verification before requesting an OTP."
+                                    return@Button
+                                }
                                 if (mobile.length != 10) {
                                     message = "Enter a valid 10-digit mobile number"
                                     return@Button
@@ -313,7 +344,7 @@ private fun NativePhoneLogin(
                                     }
                                 }
                             },
-                            enabled = !loading,
+                            enabled = !loading && privacyConsent && mobile.length == 10,
                             modifier = Modifier.fillMaxWidth().height(54.dp),
                             shape = RoundedCornerShape(10.dp)
                         ) {
