@@ -9,9 +9,12 @@
   "privacyPolicyUrl": "https://ula-dda9e-privacy.web.app/",
   "playAppId": "4975585858808542335",
   "playTrack": "Internal testing",
-  "playReleaseStatus": "Uploaded and saved as internal-testing draft; preview checked; Save and publish not clicked",
-  "playTrackStatus": "Inactive; draft now contains only code 8; code 7 retained in artifact library and local immutable copies",
-  "rolledOut": false,
+  "playReleaseStatus": "Available to internal testers; Not reviewed; temporary app name com.sunswift.ula (unreviewed)",
+  "playTrackStatus": "Active; latest release code 8; selected ULA Office Internal Testers list contains 5 users; older artifacts retained",
+  "activatedOn": "2026-10-10",
+  "testerCount": 5,
+  "testerJoinUrl": "https://play.google.com/apps/internaltest/4701012090191547671",
+  "rolledOut": true,
   "productionPublished": false,
   "aab": {
     "file": "SunSwift-ULA-v1.6.0-Web-v45.12-Play-build8.aab",
@@ -59,6 +62,7 @@
     "playPreviewErrors": 0,
     "playPreviewWarnings": 1,
     "playPreviewWarning": "No deobfuscation file associated with the bundle. Release minifyEnabled is false; no R8 mapping file is generated.",
+    "internalRollout": "Owner explicitly approved activation for the existing five selected testers. UI verified Active and Available to internal testers; join-link control enabled. Tester membership unchanged; no production/open-testing action taken.",
     "privacyAndReleaseDeclarations": "not certified complete"
   }
 }
