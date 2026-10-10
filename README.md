@@ -1,6 +1,6 @@
 # SunSwift ULA Android
 
-Android 1.5.1, based on the previous native Android 1.4.0 application and the deployed ULA web application Version 45.7.
+Android 1.6.0 (build 8), retaining the previous native authentication application and the deployed ULA web application Version 45.12. The release is pinned in `reference/web-release.json`; historical release artifacts and metadata are retained.
 
 ## Application behavior
 
@@ -11,21 +11,22 @@ Android 1.5.1, based on the previous native Android 1.4.0 application and the de
 - Re-validates authorization on the server when creating an app session.
 - Supports the current Admin, Editor and Installer roles, using the server's permissions.
 - Uses the same live Google Sheet database and Apps Script deployment as the web application.
-- Bundles the exact Version 45.7 responsive web interface inside an origin-restricted Android WebView. Native Firebase authentication remains the login gate; this is a hybrid application, not an independently reimplemented form.
+- Bundles the Version 45.12 responsive web interface inside an origin-restricted Android WebView. Native Firebase authentication remains the login gate; this is a hybrid application, not an independently reimplemented form.
 - Preserves every web form control and the latest hierarchy, dashboards, filters, reports, incentives and administration screens.
 - Includes Division, Sub Division, Section, Panchayat and Village hierarchy, transportation distances and latest stage/amount analytics.
 - Provides admin-only User control and User activity screens.
 - Shows precise before-and-after values for modified fields in the activity history.
-- Keeps the authenticated session until logout or 23:59:59 IST.
+- Uses the exact capabilities and expiry returned by the live server. The current backend ends weekly sessions on Saturday at 23:59:59 IST; the app does not impose an outdated daily deadline or infer permissions from a role name.
 - Saves generated PDF and Excel files with Android's file picker.
 - Uses the measured Android viewport height to avoid collapsed report and administration dialogs on embedded WebViews.
-- Supports system-camera/image selection, GPS capture, and on-device barcode/OCR recognition. Serial numbers must be checked and confirmed against the picture before uploading.
-- Barcode/OCR models are delivered by Google Play Services, requested at installation. If a model is still downloading, the user can manually confirm a valid serial; cancellation and invalid serials still block upload. Recognition itself remains on-device.
+- Supports system-camera/image selection, GPS capture, and on-device barcode/OCR recognition. Serial numbers are optional for capture, matching the latest web app. A detected number must still be reviewed and confirmed; cancellation or an invalid confirmed serial blocks that upload.
+- Barcode/OCR models are delivered by Google Play Services, requested at installation. If a model is unavailable or no valid serial is detected, capture can continue without assigning a serial. Recognition itself remains on-device.
+- Includes Survey done by, Installer4 and the latest first-save installer locking rules, daily/weekly/monthly activity, status permissions, and the two-page authorization-letter template.
 - Does not allow arbitrary remote pages to call the native bridge. HTTPS-only networking, no certificate bypass, no public JavaScript interface, and no session backup.
 
 ## Backend compatibility
 
-The existing Apps Script URL is unchanged. UI Version 45.7 was deployed as Apps Script immutable version 54 on 3 October 2026 with the Android compatibility adapter. A fresh database backup completed before that change.
+The existing Apps Script URL is unchanged. UI Version 45.12 was deployed as immutable Apps Script version 58 on 10 October 2026, restoring the Android compatibility adapter that was absent in version 57. The patch adds only three `doPost` cases and the explicit adapter; it preserves the existing configuration, database, permissions and UI. Version 57 remains available for rollback. No records or user privileges were changed.
 
 The adapter in `backend/AndroidApi.gs` delegates only 27 named methods. Existing server functions still validate each session and role. Add these cases to the existing `doPost` action switch when applying the adapter to another deployment:
 
@@ -56,7 +57,9 @@ node scripts/verify-web.mjs
 node scripts/verify-privacy.mjs
 ```
 
-`scripts/prepare-web.mjs` rebuilds the asset from a locally downloaded Apps Script HTML response saved as `reference/web-45.7-response.html`. Original source hashes are recorded in `reference/manifest.json`. The adapter changes authentication, native API transport, file saving and serial scanning only; all form controls remain unchanged.
+`scripts/prepare-web.mjs` rebuilds `ula-web.html` from a locally downloaded Apps Script HTML response at `reference/web-<pinned-version>-response.html`. Original source hashes and every form-control name are recorded in `reference/manifest.json`. The adapter changes authentication, native API transport, file saving and serial scanning only; all 33 latest web controls remain unchanged. Changing the release pin requires downloading and verifying the matching live source before regeneration.
+
+`node scripts/preview-interface.mjs` starts an optional loopback-only preview at `http://127.0.0.1:8876/?role=ADMIN`. EDITOR and INSTALLER fixtures are also available. It uses synthetic data, disables record/user mutations and writes test downloads only under ignored `test-results/interface`. It never connects to the live ULA server. This is not a production login mechanism and is not bundled in the APK.
 
 The installable debug APK is generated at `app/build/outputs/apk/debug/app-debug.apk`.
 The prior internal APK remains in the local `releases` folder. APKs, signing keys, build caches and device screenshots are excluded from Git.
@@ -88,7 +91,7 @@ The debug APK (`com.sunswift.ula.debug`) is suitable only for controlled testing
 
 On the original Windows account, `./scripts/build-play-release.ps1` builds the signed release using `.signing/ula-upload.p12` and a Windows-DPAPI-encrypted password. Both are excluded from Git. Keep a secure recoverable backup of the key and its password outside GitHub; DPAPI alone is tied to this Windows account. Never commit signing credentials or place them in CI logs.
 
-The current internal-testing draft bundle is Android `1.5.1-web-v45.7`, version code `7`. Public release/privacy declarations and the remaining device tests are not certified complete merely because Play accepts a draft upload.
+The last confirmed internal-testing draft before this update was Android `1.5.1-web-v45.7`, version code `7`. Build 8 is Android `1.6.0-web-v45.12`; check its release metadata for the observed upload/rollout status. Public release/privacy declarations and device tests are not certified complete merely because Play accepts an upload.
 
 Distribution is **internal testing only**. The user authorized the internal-testing preparation and provided five tester accounts, now saved/selected. Activate only the internal track after applicable release checks are ready. Do not publish to production or enable open testing without a separate explicit request.
 
@@ -103,3 +106,13 @@ Distribution is **internal testing only**. The user authorized the internal-test
 - Play accepted build 7 and saved the existing internal-testing draft with updated release notes. Code 6 was removed only from this draft and remains recoverable in Play's artifact library and the local immutable copies. No rollout or review submission was made. Exact hashes and remaining checks are recorded in `reference/play-release-7.json`.
 - The existing daily-backup Head setting was changed from 30 to the separately approved 90 days, saved and verified after reload. The existing trigger was not changed or run manually. Actual future execution, manual log retention and verified deletion-request handling remain unverified.
 - Remaining Play declarations and device checks are not certified complete merely because the policy is public or its URL is saved. The original code-6 immutable artifacts and release metadata are preserved.
+
+## Version 45.12 update on 10 October 2026
+
+- Downloaded the fresh public deployment and verified Version 45.12, not the stale 45.10 open-tab content. Source and adapted hashes are recorded in the manifest.
+- All 33 latest form controls are preserved. Automated checks pass for all protected web delegates, prototype rejection, malformed arguments, bridge success/error/timeout, viewport handling, optional serial capture, detected-number review and cancellation, privacy consent, exact server capabilities and server-controlled session expiry.
+- Signed release build and lint passed: 0 errors, 9 warnings. APK and AAB ARM64/x86-64 LOAD and RELRO checks pass; APK ZIP alignment passes. The upload certificate, package name, SDK target and permission set are unchanged.
+- Live Android read-only checks reject invalid sessions for records/admin calls and unknown prototype operations. The restored preflight rejects an invalid mobile without requesting SMS.
+- A synthetic fixture generated a two-page authorization letter and an Excel export through the actual bundled UI and native-download adapter. PDF pages were rendered and checked for the correct synthetic consumer, address and consumer number. These tests do not certify Android file-picker behavior or legal validity of the template.
+- Actual 412-pixel viewport measurements confirm a single-column layout without page overflow. Synthetic record links load Survey done by and Installer4 into the matching edit form. Physical-phone, camera/GPS, role/scope and 16 KB runtime checks require their own observed evidence.
+- Consumer count was 268 before the backend update. No consumer or user records were changed by the update or synthetic tests.

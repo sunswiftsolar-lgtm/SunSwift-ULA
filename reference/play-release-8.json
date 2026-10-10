@@ -1,0 +1,60 @@
+{
+  "appName": "ULA Data Management",
+  "packageName": "com.sunswift.ula",
+  "versionName": "1.6.0-web-v45.12",
+  "versionCode": 8,
+  "webReferenceVersion": "45.12",
+  "targetSdk": 36,
+  "preparedOn": "2026-10-10",
+  "privacyPolicyUrl": "https://ula-dda9e-privacy.web.app/",
+  "playAppId": "4975585858808542335",
+  "playTrack": "Internal testing",
+  "playReleaseStatus": "Upload pending: Chrome extension file access requires owner action",
+  "playTrackStatus": "Inactive; existing code-7 draft preserved",
+  "rolledOut": false,
+  "productionPublished": false,
+  "aab": {
+    "file": "SunSwift-ULA-v1.6.0-Web-v45.12-Play-build8.aab",
+    "bytes": 14690294,
+    "sha256": "56207fe566e9c47b354747e16986c2fdd20734058b541f71cf39d1abb24dda3e"
+  },
+  "apk": {
+    "file": "SunSwift-ULA-v1.6.0-Web-v45.12-Release-build8.apk",
+    "bytes": 15154939,
+    "sha256": "e9284cfb50caa8eec28a9c77ca38e15812a4adde372f221b7dd5999c9d7c088a"
+  },
+  "uploadCertificateSha256": "9D:87:E0:6F:B8:48:EE:57:48:2E:0D:64:4A:57:23:EB:4F:11:74:8D:29:0F:BE:55:B0:39:04:E8:75:31:CF:BE",
+  "backend": {
+    "immutableVersion": 58,
+    "previousVersion": 57,
+    "deploymentUrlChanged": false,
+    "uiVersionChanged": false,
+    "databaseChanged": false,
+    "userPrivilegesChanged": false,
+    "patch": "Restored checkLoginMobile/getPublicAuthConfig/webCall doPost cases and the explicit 27-method delegate. Existing server session/role checks retained."
+  },
+  "checks": {
+    "releaseBuild": "passed",
+    "releaseLintErrors": 0,
+    "releaseLintWarnings": 9,
+    "apkSignature": "verified; existing upload certificate",
+    "apk16KBZipAlignment": "passed",
+    "apkAndAab64BitLoadAlignment": "2/2 passed in each",
+    "apkAndAab64BitRelroAlignment": "2/2 passed in each",
+    "webControlsBridgeAndSerialRegressions": "passed; all 33 latest web controls preserved",
+    "privacyConsentAndServerPermissions": "passed; exact capabilities, five-minute OTP gate and live-server expiry",
+    "liveInvalidSessionAndPrototypeRejection": "passed after same-URL backend update",
+    "liveInvalidPhonePreflight": "unauthorized; Firebase configured; no SMS requested",
+    "newPermissionsAdded": false,
+    "syntheticMobileLayout": "observed 412px viewport, 397px document, single-column layout",
+    "syntheticRecordEditing": "consumer link opens matching edit form, Survey done by and Installer4 loaded",
+    "syntheticRoleUi": "Editor admin/activity hidden; Installer admin/export hidden, consumer/survey disabled, Installer4 editable on reopened record",
+    "syntheticPdf": "actual bundled generator produced two-page PDF; rendered pages verified with correct fake consumer/address/number",
+    "syntheticExcel": "actual bundled UI and download bridge produced 20131-byte XLSX",
+    "physicalPhone": "pending: no device connected at last check; owner said they will connect it",
+    "androidFilePickerCameraAndGps": "pending physical-device test",
+    "runtime16KBDeviceTest": "pending",
+    "playUpload": "not yet confirmed",
+    "privacyAndReleaseDeclarations": "not certified complete"
+  }
+}

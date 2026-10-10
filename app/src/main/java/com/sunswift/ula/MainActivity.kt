@@ -60,8 +60,8 @@ private val UlaError = Color(0xFF9D2D20)
 private val UlaInk = Color(0xFF18212B)
 private val UlaMuted = Color(0xFF667085)
 private val UlaLine = Color(0xFFD8DEE6)
-private const val ANDROID_VERSION = "1.5.1"
-private const val WEB_REFERENCE_VERSION = "45.7"
+private const val ANDROID_VERSION = BuildConfig.ULA_ANDROID_VERSION
+private const val WEB_REFERENCE_VERSION = BuildConfig.ULA_WEB_VERSION
 private const val OTP_VALIDITY_SECONDS = 300
 
 class MainActivity : ComponentActivity() {
@@ -416,7 +416,7 @@ private fun NativePhoneLogin(
                     }
                     HorizontalDivider(Modifier.padding(vertical = 16.dp), color = UlaLine)
                     Text(
-                        "Your verified session stays open until you log out or 23:59:59 IST. A new OTP is required after expiry.",
+                        "Your verified session stays open until logout or the server-set expiry. A new OTP is required after expiry.",
                         color = UlaMuted, fontSize = 12.sp
                     )
                 }

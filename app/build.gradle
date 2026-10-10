@@ -5,6 +5,8 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+def ulaRelease = new groovy.json.JsonSlurper().parse(file('../reference/web-release.json'))
+
 android {
     namespace 'com.sunswift.ula'
     compileSdk 36
@@ -15,8 +17,10 @@ android {
         applicationId 'com.sunswift.ula'
         minSdk 24
         targetSdk 36
-        versionCode 7
-        versionName '1.5.1-web-v45.7'
+        versionCode ulaRelease.versionCode
+        versionName "${ulaRelease.androidVersion}-web-v${ulaRelease.webVersion}"
+        buildConfigField 'String', 'ULA_ANDROID_VERSION', "\"${ulaRelease.androidVersion}\""
+        buildConfigField 'String', 'ULA_WEB_VERSION', "\"${ulaRelease.webVersion}\""
         externalNativeBuild {
             cmake {
                 arguments '-DANDROID_STL=c++_static'

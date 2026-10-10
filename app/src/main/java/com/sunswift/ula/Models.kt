@@ -30,7 +30,8 @@ data class UlaUser(
     val name: String,
     val role: String,
     val canAdmin: Boolean,
-    val canEdit: Boolean
+    val canEdit: Boolean,
+    val permissionsJson: String = "{}"
 ) {
     companion object {
         fun fromJson(json: JSONObject): UlaUser {
@@ -40,7 +41,8 @@ data class UlaUser(
                 name = json.optString("name", json.optString("mobile", "User")),
                 role = json.optString("role", "VIEWER"),
                 canAdmin = permissions.optBoolean("admin", false),
-                canEdit = permissions.optBoolean("edit", false)
+                canEdit = permissions.optBoolean("edit", false),
+                permissionsJson = permissions.toString()
             )
         }
     }

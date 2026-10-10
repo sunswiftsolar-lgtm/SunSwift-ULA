@@ -1,4 +1,4 @@
-/** Android 1.5 compatibility: explicit methods only, with the existing server role checks. */
+/** Android compatibility: explicit methods only, with the existing server role checks. */
 function mobileAndroidCall_(sessionToken, method, args) {
   if (!Array.isArray(args) || args.length > 6) validationError_('Invalid Android request.');
   const methods = {

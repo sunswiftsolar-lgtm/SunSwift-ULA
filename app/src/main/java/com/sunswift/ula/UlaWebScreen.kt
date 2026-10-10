@@ -47,10 +47,10 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 private const val ASSET_ORIGIN = "https://appassets.androidplatform.net"
-private const val ASSET_URL = "$ASSET_ORIGIN/assets/ula-45.7.html"
+private const val ASSET_URL = "$ASSET_ORIGIN/assets/ula-web.html"
 private const val MAX_BRIDGE_BYTES = 24 * 1024 * 1024
 
-/** The v1.4 native authentication remains the gate to the bundled 45.7 interface. */
+/** Native authentication remains the gate to the pinned live-web interface. */
 @Composable
 fun UlaWebScreen(state: UlaAppState, onLogout: () -> Unit) {
     val context = LocalContext.current
@@ -219,7 +219,7 @@ fun UlaWebScreen(state: UlaAppState, onLogout: () -> Unit) {
                                     "session" -> respond(true, current.sessionJson())
                                     "api" -> respond(true, api.webCall(current.sessionToken, payload.getString("method"), payload.optJSONArray("args") ?: JSONArray()))
                                     "scan" -> {
-                                        if (!current.user.canEdit && current.user.role != "INSTALLER") throw UlaApiException("Installation access is required.")
+                                        if (!current.user.canEdit && !JSONObject(current.user.permissionsJson).optBoolean("installationEdit", false)) throw UlaApiException("Installation access is required.")
                                         respond(true, scanSerial(payload.getString("dataUrl")))
                                     }
                                     "download" -> {
@@ -260,8 +260,7 @@ private data class NativeDownload(val bytes: ByteArray, val respond: (Boolean, A
 private fun UlaAppState.sessionJson(): JSONObject = JSONObject()
     .put("sessionToken", sessionToken).put("expiresAt", sessionExpiresAt)
     .put("user", JSONObject().put("mobile", user!!.mobile).put("name", user.name).put("role", user.role)
-        .put("permissions", JSONObject().put("admin", user.canAdmin).put("edit", user.canEdit)
-            .put("installationEdit", user.role == "INSTALLER").put("export", user.canAdmin || user.canEdit).put("view", true)))
+        .put("permissions", JSONObject(user.permissionsJson)))
 
 private suspend fun scanSerial(dataUrl: String): JSONObject = withContext(Dispatchers.Default) {
     if (!dataUrl.startsWith("data:image/jpeg;base64,") || dataUrl.length > 6 * 1024 * 1024) throw UlaApiException("Invalid scan image.")
@@ -278,7 +277,7 @@ private suspend fun scanSerial(dataUrl: String): JSONObject = withContext(Dispat
     } catch (failure: MlKitException) {
         if (failure.errorCode != MlKitException.UNAVAILABLE) throw failure
         // Never infer a serial while the on-device model is still downloading.
-        // The web form still requires the user to manually confirm a valid one.
+        // Serial capture is optional; any detected number still needs confirmation.
         JSONObject().put("candidates", JSONArray()).put("source", "model-unavailable")
     } finally { scanner.close(); textReader.close(); bitmap.recycle() }
 }

@@ -48,7 +48,7 @@ class UlaViewModel(application: Application) : AndroidViewModel(application) {
             val storedToken = preferences.getString("session_token", "").orEmpty()
             val storedExpiry = preferences.getLong("session_expires_at", 0L)
             if (storedToken.isBlank() || storedExpiry <= System.currentTimeMillis()) {
-                requireFreshOtp("Your session ended at 23:59:59 IST. Request a new OTP to continue.")
+                requireFreshOtp("Your session has expired. Request a new OTP to continue.")
                 return@launch
             }
             try {
@@ -105,7 +105,7 @@ class UlaViewModel(application: Application) : AndroidViewModel(application) {
         expiryJob = viewModelScope.launch {
             val remaining = expiresAt - System.currentTimeMillis()
             if (remaining > 0L) delay(remaining)
-            requireFreshOtp("Your session ended at 23:59:59 IST. Request a new OTP to continue.")
+            requireFreshOtp("Your session has expired. Request a new OTP to continue.")
         }
     }
 

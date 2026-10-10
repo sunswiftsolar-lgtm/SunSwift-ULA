@@ -185,7 +185,7 @@ class UlaApi {
                 doOutput = true
                 setRequestProperty("Content-Type", "application/json; charset=UTF-8")
                 setRequestProperty("Accept", "application/json")
-                setRequestProperty("User-Agent", "SunSwift-ULA-Android/1.5-web-v45.7")
+                setRequestProperty("User-Agent", "SunSwift-ULA-Android/${BuildConfig.VERSION_NAME}")
             }
 
             try {

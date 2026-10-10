@@ -1,5 +1,6 @@
 .gradle/
 .gradle-*/
+.kotlin/
 .android/
 .android-*/
 local.properties

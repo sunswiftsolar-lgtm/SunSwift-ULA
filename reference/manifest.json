@@ -1,10 +1,11 @@
 {
-  "webVersion": "45.7",
-  "androidVersion": "1.5.1",
-  "sourceSha256": "e1f9daf4e5a494711c9c167cb70a377c3190fce9a1ca4f88f8667b1547bbbd6b",
-  "assetSha256": "15d2e7ac8ef3f85255e367f3a6204459c132110334dfca951ff5bec2d0416252",
+  "webVersion": "45.12",
+  "androidVersion": "1.6.0",
+  "versionCode": 8,
+  "assetFile": "ula-web.html",
+  "sourceSha256": "294a719f7c2f67abe0fb891ea5dc6323eebb5bf6a8f27ad12d18d98ad0463dbd",
+  "assetSha256": "d1f7c3d65d6606d9fa614ea810bd8c97a275ee8076c57d9fc78eb8a3a055a53c",
   "sourceControls": [
-    "billSubmitted",
     "consumerName",
     "consumerNo",
     "consumerPaymentReceivedBy",
@@ -15,6 +16,7 @@
     "installer1",
     "installer2",
     "installer3",
+    "installer4",
     "inverterSerialNo",
     "mobileNo",
     "paidAmount",
@@ -35,6 +37,7 @@
     "sectionName",
     "subDivisionName",
     "surveyDate",
+    "surveyDoneBy",
     "villageName"
   ],
   "deploymentId": "AKfycbzEKG3_WJM2oFr2XjE9PXpsOx5HD6YRgSKVN8MLGP4EsxFmB4hXfuv_wp-zsRf3UBRM"
