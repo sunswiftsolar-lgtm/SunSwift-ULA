@@ -9,8 +9,8 @@
   "privacyPolicyUrl": "https://ula-dda9e-privacy.web.app/",
   "playAppId": "4975585858808542335",
   "playTrack": "Internal testing",
-  "playReleaseStatus": "Upload pending: Chrome extension file access requires owner action",
-  "playTrackStatus": "Inactive; existing code-7 draft preserved",
+  "playReleaseStatus": "Uploaded and saved as internal-testing draft; preview checked; Save and publish not clicked",
+  "playTrackStatus": "Inactive; draft now contains only code 8; code 7 retained in artifact library and local immutable copies",
   "rolledOut": false,
   "productionPublished": false,
   "aab": {
@@ -54,7 +54,11 @@
     "physicalPhone": "pending: no device connected at last check; owner said they will connect it",
     "androidFilePickerCameraAndGps": "pending physical-device test",
     "runtime16KBDeviceTest": "pending",
-    "playUpload": "not yet confirmed",
+    "playUpload": "accepted: UI confirmed 1 app bundle uploaded, code 8, target SDK 36",
+    "playDraftSave": "confirmed: Changes saved. You can now preview your release before publishing it.",
+    "playPreviewErrors": 0,
+    "playPreviewWarnings": 1,
+    "playPreviewWarning": "No deobfuscation file associated with the bundle. Release minifyEnabled is false; no R8 mapping file is generated.",
     "privacyAndReleaseDeclarations": "not certified complete"
   }
 }
