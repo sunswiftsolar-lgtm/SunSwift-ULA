@@ -30,7 +30,7 @@
   <header>
     <p class="brand">SunSwift Solar</p>
     <h1>ULA Data Management Privacy Policy</h1>
-    <p class="subtle">Effective date: 4 October 2026</p>
+    <p class="subtle">Effective date: 10 October 2026</p>
   </header>
 
   <section aria-labelledby="purpose">
@@ -68,7 +68,7 @@
   <section aria-labelledby="permissions">
     <h2 id="permissions">5. Images, location and device permissions</h2>
     <p>When a user chooses to add an installation image, the Android application opens the system camera or image picker. ULA does not declare its own camera permission; the camera application may have its own permission requirements.</p>
-    <p>ULA requests foreground location permission when needed for the user-initiated geo-tagged installation-image workflow. It does not continuously track location in the background. Users can decline or revoke location permission in Android settings, but the geo-tagged image workflow then cannot complete.</p>
+    <p>ULA requests foreground location permission when needed for the user-initiated geo-tagged installation-image workflow. A short-lived location service, shown through Android's capture notification or active-app indicator, can keep obtaining capture-time GPS while the system camera is open. It stops when the capture no longer needs GPS, with a maximum of 15 minutes, and is not started by automatic uploads. ULA does not continuously track location in the background or request always-on background location access. Users can decline or revoke location permission in Android settings, but the geo-tagged image workflow then cannot complete.</p>
     <p>The application does not request access to contacts, the SMS inbox, microphone or background location. Reports are saved through the Android file picker rather than broad storage permission.</p>
   </section>
 
@@ -81,6 +81,8 @@
   <section aria-labelledby="security">
     <h2 id="security">7. Security and user responsibilities</h2>
     <p>ULA uses HTTPS connections and server-side authorization checks. The Android interface bridge is restricted to the bundled interface, and Android app backup is disabled. No safeguard provides absolute security.</p>
+    <p>Offline installation photos and their capture details are saved in app-private storage on the phone and encrypted using an Android Keystore key. A photo can be taken without waiting for its location description, compression or upload. GPS fixes are recorded around capture time while the photo workflow is in use, not substituted with the phone's later upload-time location. If capture-time GPS is unavailable, the photo stays on the phone with a warning and cannot complete a geo-tagged upload.</p>
+    <p>When a connection returns, Android schedules uploads in the background using the original photographer's unexpired ULA session, subject to live server authorization. Uploads pause if that user is signed out, the session has expired or access is no longer allowed. Android battery management or force-stopping the app may delay uploads; reopening ULA resumes scheduling. Original photos remain stored on the phone after successful upload. Clearing ULA app data or uninstalling ULA removes these local copies and any pending photos; it does not erase photos already uploaded to the cloud. Keep the phone protected and verify uploads before clearing data or uninstalling.</p>
     <p>Staff should protect their devices and exported reports, avoid sharing OTPs and sign out when appropriate. Signing out, disabling a user or uninstalling the application does not itself erase cloud records, images, Firebase authentication information or exported files.</p>
   </section>
 

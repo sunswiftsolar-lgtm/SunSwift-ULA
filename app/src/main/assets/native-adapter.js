@@ -13,7 +13,7 @@
       return new Promise((resolve, reject) => {
         if (!window.ulaHost) { reject(Error('The secure Android connection is unavailable.')); return; }
         const id = String(++nextId);
-        const timer = setTimeout(() => { pending.delete(id); reject(Error('The request timed out. Check the cloud before retrying.')); }, 120000);
+        const timer = setTimeout(() => { pending.delete(id); reject(Error('The request timed out. Check the cloud before retrying.')); }, kind==='capturePhoto'?900000:120000);
         pending.set(id, {resolve,reject,timer});
         ulaHost.postMessage(JSON.stringify({id,kind,payload}));
       });

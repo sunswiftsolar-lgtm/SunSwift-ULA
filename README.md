@@ -1,6 +1,6 @@
 # SunSwift ULA Android
 
-Android 1.6.0 (build 8), retaining the previous native authentication application and the deployed ULA web application Version 45.12. The release is pinned in `reference/web-release.json`; historical release artifacts and metadata are retained.
+Android 1.7.1 (build 10), retaining native authentication and the deployed ULA web application Version 45.12. The release is pinned in `reference/web-release.json`; historical release artifacts and metadata are retained. Build 10 is installed locally and saved as an internal-testing draft, not rolled out yet.
 
 ## Application behavior
 
@@ -19,7 +19,7 @@ Android 1.6.0 (build 8), retaining the previous native authentication applicatio
 - Uses the exact capabilities and expiry returned by the live server. The current backend ends weekly sessions on Saturday at 23:59:59 IST; the app does not impose an outdated daily deadline or infer permissions from a role name.
 - Saves generated PDF and Excel files with Android's file picker.
 - Uses the measured Android viewport height to avoid collapsed report and administration dialogs on embedded WebViews.
-- Supports system-camera/image selection, GPS capture, and on-device barcode/OCR recognition. Serial numbers are optional for capture, matching the latest web app. A detected number must still be reviewed and confirmed; cancellation or an invalid confirmed serial blocks that upload.
+- Supports system-camera/image selection, capture-time GPS and on-device barcode/OCR recognition. Confirmed photos are encrypted on the phone before the next capture is enabled. GPS, compression and upload do not block the next camera launch. Optional "Read serial" runs after capture; users must review its result and use Update record to save a serial. Cancelling recognition does not discard a captured photo.
 - Barcode/OCR models are delivered by Google Play Services, requested at installation. If a model is unavailable or no valid serial is detected, capture can continue without assigning a serial. Recognition itself remains on-device.
 - Includes Survey done by, Installer4 and the latest first-save installer locking rules, daily/weekly/monthly activity, status permissions, and the two-page authorization-letter template.
 - Does not allow arbitrary remote pages to call the native bridge. HTTPS-only networking, no certificate bypass, no public JavaScript interface, and no session backup.
@@ -55,6 +55,7 @@ Verify bundled UI parity and the bridge before building:
 ```text
 node scripts/verify-web.mjs
 node scripts/verify-privacy.mjs
+node scripts/verify-offline-photos.mjs
 ```
 
 `scripts/prepare-web.mjs` rebuilds `ula-web.html` from a locally downloaded Apps Script HTML response at `reference/web-<pinned-version>-response.html`. Original source hashes and every form-control name are recorded in `reference/manifest.json`. The adapter changes authentication, native API transport, file saving and serial scanning only; all 33 latest web controls remain unchanged. Changing the release pin requires downloading and verifying the matching live source before regeneration.
@@ -91,9 +92,9 @@ The debug APK (`com.sunswift.ula.debug`) is suitable only for controlled testing
 
 On the original Windows account, `./scripts/build-play-release.ps1` builds the signed release using `.signing/ula-upload.p12` and a Windows-DPAPI-encrypted password. Both are excluded from Git. Keep a secure recoverable backup of the key and its password outside GitHub; DPAPI alone is tied to this Windows account. Never commit signing credentials or place them in CI logs.
 
-The last confirmed internal-testing draft before this update was Android `1.5.1-web-v45.7`, version code `7`. Build 8 is Android `1.6.0-web-v45.12`; check its release metadata for the observed upload/rollout status. Public release/privacy declarations and device tests are not certified complete merely because Play accepts an upload.
+Build 8 (`1.6.0-web-v45.12`) remains the active internal release. Build 10 (`1.7.1-web-v45.12`) is the offline-photo update saved as a draft. See `reference/play-release-10.json` for observed checks and pending real-camera testing. Play upload acceptance does not certify public-release declarations or complete device testing.
 
-Distribution is **internal testing only**. The user authorized the internal-testing preparation and provided five tester accounts, now saved/selected. Activate only the internal track after applicable release checks are ready. Do not publish to production or enable open testing without a separate explicit request.
+Distribution is **internal testing only**. The owner previously supplied five tester accounts. Do not assume historical membership is current: a later browser session showed an unrelated unsaved tester-list edit, which this update deliberately left untouched. Activate only the internal track after applicable release checks are ready. Do not publish to production or enable open testing without a separate explicit request.
 
 ## Privacy update on 4 October 2026
 
@@ -131,3 +132,16 @@ Distribution is **internal testing only**. The user authorized the internal-test
 - Observed the installation-image chooser and external system camera. Owner photographed a non-sensitive object on the test consumer and allowed foreground location. ULA saved one Plant image to the live Drive image path. Retrieved/downloaded JPEG is 202,439 bytes (UI 198 KB), below 200 KiB; its visual stamp includes the correct test consumer, actual GPS/resolved location, capture date/time, Administrator and reported +/-20m accuracy. Precise coordinates, the private photo, screenshots and UI dumps remain excluded from Git.
 - This test uses the local signed release APK, not a Play-installed APK. Deliberate five-minute OTP expiry, non-admin physical role/scope tests and 16 KB runtime testing remain unverified on this build. The phone uses 4 KB pages. No app source, release artifact, backend deployment or public distribution setting changed during these tests.
 - Force-stopped and relaunched the app without clearing data; Administrator/ADMIN and the live 269-record register restored without another OTP. Scoped recent AndroidRuntime checks found no ULA fatal crash. Restored the owner-approved temporary USB stay-awake setting to its original `0`; the original 60-second screen timeout was unchanged.
+
+## Offline installation photos, 10–11 October 2026
+
+- Build 10 adds app-private Android Keystore AES-GCM encryption and atomic writes for confirmed originals, capture metadata and processed JPEGs. Confirmed originals remain locally after upload; clearing app data or uninstalling removes local and pending copies. Only temporary unconfirmed camera staging is removed after a successful durable save or cancellation.
+- A foreground-permission, capture-scoped location service keeps requesting GPS while the external camera is open, with an Android notification/active-app indicator and a 15-minute upper bound. Workers never request a later upload-time location. Only fixes within two minutes of capture are accepted; missing GPS leaves the original on the phone with a recapture warning. No always-on background-location permission was added.
+- WorkManager schedules network-constrained retries, independent of the capture UI. Each upload requires the original photographer's current Firebase identity and unexpired server-validated ULA access. Server record/scope checks remain unchanged. Read-back handles uncertain responses and avoids replacing an already newer image. Originals and superseded captures remain locally.
+- Phone-copy viewing, optional post-capture serial review, manual retry and interrupted-camera recovery are available in the installation-images section. Offline reopening uses only the same user's last validated, unexpired session and read-only cache. Logout/session rejection/expiry clear that web cache but not encrypted queued photos.
+- Upload scheduling is subject to Android battery/process management. Force-stopping ULA prevents automatic work until it is reopened. Reconnection alone cannot upload after session expiry or without capture-time GPS; the queue explains the required action.
+- Release/debug/test builds and release lint passed (0 errors, 13 warnings). All web/privacy/offline UI regressions pass; the 33 reference controls remain unchanged. Signature and APK/AAB 64-bit LOAD/RELRO and APK ZIP alignment checks pass. A 16 KB runtime test remains pending.
+- Installed signed `1.7.1-web-v45.12` code 10 in place on the connected LAVA phone, without uninstalling or clearing production app data. The separate debug-package instrumentation test passed: two synthetic captures, encrypted disk round-trip and reopened queue, cross-user hiding, stale/fresh synthetic GPS handling, JPEG <=200 KiB, and original retention after a simulated uploaded state. This is a component test, **not** a real camera/network-recovery/upload test.
+- Real-camera offline testing on `ULATESTB8001` remains pending the owner's renewed admin OTP login after the weekly session expired at midnight. No new real test photos or office records were uploaded/modified during this update. Wi-Fi and mobile data were not disabled; temporary USB stay-awake was restored to its original `0`.
+- With explicit approval, published and browser-verified the encrypted local-storage/queued-upload wording on the existing public privacy site. No other Firebase site or live backend was changed.
+- Play accepted build 10 and saved the internal-testing draft. Preview has 0 errors and 1 deobfuscation-file warning; release minification is disabled. The intermediate build 9 was removed only from this draft and remains in the artifact library/local immutable files. No rollout, production/open-testing action, or tester-membership change was performed.

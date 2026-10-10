@@ -25,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
 import androidx.webkit.WebViewCompat
@@ -56,6 +59,11 @@ fun UlaWebScreen(state: UlaAppState, onLogout: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val api = remember { UlaApi() }
+    val photoQueue = remember { PhotoQueue(context.applicationContext) }
+    val captureGps = remember { CaptureGps(context, photoQueue, scope) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var captureResponse by remember { mutableStateOf<((Boolean, Any) -> Unit)?>(null) }
+    var pendingPhotoLaunch by remember { mutableStateOf<(() -> Unit)?>(null) }
     val currentState by rememberUpdatedState(state)
     val currentLogout by rememberUpdatedState(onLogout)
     var webView by remember { mutableStateOf<WebView?>(null) }
@@ -65,12 +73,28 @@ fun UlaWebScreen(state: UlaAppState, onLogout: () -> Unit) {
     var geoRequest by remember { mutableStateOf<Pair<String, GeolocationPermissions.Callback>?>(null) }
     var pendingDownload by remember { mutableStateOf<NativeDownload?>(null) }
 
+    fun finishQuickCapture(success: Boolean, uri: Uri? = null) {
+        val respond = captureResponse
+        captureResponse = null
+        scope.launch {
+            try {
+                if (!success) { withContext(Dispatchers.IO) { photoQueue.cancelDraft() }; respond?.invoke(false, "Photo capture cancelled."); return@launch }
+                val item = withContext(Dispatchers.IO) { photoQueue.confirmDraft(uri) }
+                captureGps.start(); captureGps.attachLatest()
+                CaptureLocationService.start(context)
+                respond?.invoke(true, JSONObject().put("queued", true).put("id", item.getString("id")))
+            } catch (failure: Exception) { respond?.invoke(false, failure.message ?: "Photo could not be saved on phone. The draft remains available for recovery.") }
+        }
+    }
+
     val camera = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (captureResponse != null || photoQueue.draft() != null) { finishQuickCapture(success); return@rememberLauncherForActivityResult }
         fileCallback?.onReceiveValue(if (success) captureUri?.let { arrayOf(it) } else null)
         fileCallback = null
         captureUri = null
     }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (captureResponse != null || photoQueue.draft() != null) { finishQuickCapture(uri != null, uri); return@rememberLauncherForActivityResult }
         fileCallback?.onReceiveValue(uri?.let { arrayOf(it) })
         fileCallback = null
     }
@@ -79,6 +103,11 @@ fun UlaWebScreen(state: UlaAppState, onLogout: () -> Unit) {
             callback.invoke(origin, granted[Manifest.permission.ACCESS_FINE_LOCATION] == true || granted[Manifest.permission.ACCESS_COARSE_LOCATION] == true, false)
         }
         geoRequest = null
+    }
+    val captureLocationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+        captureGps.start()
+        CaptureLocationService.start(context)
+        pendingPhotoLaunch?.invoke(); pendingPhotoLaunch = null
     }
     val saveFile = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val download = pendingDownload
@@ -102,9 +131,18 @@ fun UlaWebScreen(state: UlaAppState, onLogout: () -> Unit) {
         onDispose {
             fileCallback?.onReceiveValue(null)
             geoRequest?.let { it.second.invoke(it.first, false, false) }
-            WebStorage.getInstance().deleteAllData()
+            captureGps.stop()
             webView?.apply { stopLoading(); removeAllViews(); destroy() }
         }
+    }
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) { captureGps.start(); photoQueue.schedule() }
+            if (event == Lifecycle.Event.ON_PAUSE) captureGps.stop()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        captureGps.start(); photoQueue.schedule()
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer); captureGps.stop() }
     }
     BackHandler {
         webView?.evaluateJavascript("(() => {const dialogs=[...document.querySelectorAll('dialog[open]')];if(dialogs.length)dialogs.at(-1).close();else window.scrollTo({top:0,behavior:'smooth'});})()", null)
@@ -218,6 +256,46 @@ fun UlaWebScreen(state: UlaAppState, onLogout: () -> Unit) {
                                 when (request.getString("kind")) {
                                     "session" -> respond(true, current.sessionJson())
                                     "api" -> respond(true, api.webCall(current.sessionToken, payload.getString("method"), payload.optJSONArray("args") ?: JSONArray()))
+                                    "photoQueue" -> respond(true, withContext(Dispatchers.IO) {
+                                        photoQueue.summary(current.user.mobile).put("unfinishedCapture", photoQueue.draft()?.optString("ownerMobile") == current.user.mobile)
+                                    })
+                                    "retryPhotos" -> { photoQueue.schedule(); respond(true, JSONObject().put("scheduled", true)) }
+                                    "phonePhoto" -> {
+                                        val item = withContext(Dispatchers.IO) { photoQueue.all().find { it.optString("id") == payload.optString("id") && it.optString("ownerMobile") == current.user.mobile } }
+                                            ?: throw UlaApiException("This phone photo does not belong to your account.")
+                                        val bytes = withContext(Dispatchers.Default) { photoQueue.prepared(item) ?: PhotoStamp.thumbnail(photoQueue.raw(item)) }
+                                        val url = "data:image/jpeg;base64," + Base64.encodeToString(bytes, Base64.NO_WRAP)
+                                        if (payload.optBoolean("scan")) respond(true, scanSerial(url))
+                                        else respond(true, JSONObject().put("dataUrl", url).put("name", "${item.getJSONObject("record").optString("consumerNo")}_${item.optString("imageType")}_phone.jpg"))
+                                    }
+                                    "recoverCapture" -> {
+                                        val draft = photoQueue.draft() ?: throw UlaApiException("No unfinished capture.")
+                                        if (draft.optString("ownerMobile") != current.user.mobile) throw UlaApiException("Sign in as the original photographer to recover this capture.")
+                                        val item = withContext(Dispatchers.IO) { photoQueue.confirmDraft() }
+                                        captureGps.attachLatest(); respond(true, JSONObject().put("queued", true).put("id", item.getString("id")))
+                                    }
+                                    "capturePhoto" -> {
+                                        if (!current.user.canEdit && !JSONObject(current.user.permissionsJson).optBoolean("installationEdit", false)) throw UlaApiException("Installation access is required.")
+                                        if (captureResponse != null) throw UlaApiException("Finish the current camera capture first.")
+                                        val item = withContext(Dispatchers.IO) { photoQueue.begin(payload.getJSONObject("record"), payload.getString("imageType"), current.user) }
+                                        captureResponse = { ok, value -> respond(ok, value) }
+                                        AlertDialog.Builder(context).setTitle("Installation image")
+                                            .setItems(arrayOf("Take photo", "Choose existing image")) { _, index ->
+                                                val launchPhoto: () -> Unit = {
+                                                    captureGps.start()
+                                                    CaptureLocationService.start(context)
+                                                    try {
+                                                        if (index == 0) camera.launch(FileProvider.getUriForFile(context, "${context.packageName}.files", photoQueue.captureFile(item)))
+                                                        else picker.launch("image/*")
+                                                    } catch (failure: Exception) { finishQuickCapture(false); error = failure.message }
+                                                }
+                                                if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                                    pendingPhotoLaunch = launchPhoto
+                                                    captureLocationPermission.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
+                                                } else launchPhoto()
+                                            }
+                                            .setOnCancelListener { finishQuickCapture(false) }.show()
+                                    }
                                     "scan" -> {
                                         if (!current.user.canEdit && !JSONObject(current.user.permissionsJson).optBoolean("installationEdit", false)) throw UlaApiException("Installation access is required.")
                                         respond(true, scanSerial(payload.getString("dataUrl")))

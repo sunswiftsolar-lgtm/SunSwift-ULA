@@ -45,6 +45,10 @@ adapted = replaceOnce(adapted, /    async function confirmPhotoSerial\(file,type
       finally{bitmap?.close?.()}
     }\n`);
 const bridge = fs.readFileSync(path.join(root, 'app/src/main/assets/native-adapter.js'), 'utf8');
+const photos = fs.readFileSync(path.join(root, 'app/src/main/assets/native-photos.js'), 'utf8');
+adapted = replaceOnce(adapted, /    async function captureConsumerPhoto\(type,file\)\{[\s\S]*?(?=    async function fetchConsumerPhoto)/, photos);
+adapted = replaceOnce(adapted, /    document\.querySelectorAll\('\[data-capture-photo\]'\)\.forEach\(button=>button\.addEventListener\('click',[^\n]+\n/,
+  `    document.querySelectorAll('[data-capture-photo]').forEach(button=>button.addEventListener('click',()=>void captureConsumerPhoto(button.dataset.capturePhoto)));\n`);
 const mobileCss = fs.readFileSync(path.join(root, 'app/src/main/assets/native-mobile.css'), 'utf8');
 adapted = adapted.replace('</head>', `<style>${mobileCss}</style><script>${bridge}</script></head>`);
 // Some embedded Android WebViews measure vh/dvh as zero at first layout. Use

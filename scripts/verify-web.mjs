@@ -78,7 +78,7 @@ const timedOut = browser.window.UlaNative.request('api');
 [...callbacks.values()][0](); await assert.rejects(timedOut, /timed out/);
 
 // Photos no longer require a serial, but a detected number cannot bypass review.
-const confirmationCode = asset.match(/async function confirmPhotoSerial\(file,type\)\{[\s\S]*?(?=    async function captureConsumerPhoto)/)?.[0];
+const confirmationCode = asset.match(/async function confirmPhotoSerial\(file,type\)\{[\s\S]*?(?=    (?:\/\/ Native durable|async function captureConsumerPhoto))/)?.[0];
 assert.ok(confirmationCode, 'Expected the native photo serial adapter');
 let scanResult = {candidates: [], source: 'model-unavailable'}, answer = 'new12345', promptMessage = '', scanError = null, closedBitmaps = 0;
 const photoSandbox = {

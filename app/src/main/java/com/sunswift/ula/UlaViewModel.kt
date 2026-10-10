@@ -15,6 +15,7 @@ import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.io.IOException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -53,6 +54,14 @@ class UlaViewModel(application: Application) : AndroidViewModel(application) {
             }
             try {
                 acceptSession(api.resumeSession(storedToken))
+            } catch (network: IOException) {
+                // An offline connection is not a revoked login. Reuse only the same Firebase user and an unexpired validated session.
+                val cached = preferences.getString("session_user", null)?.let { runCatching { UlaUser.fromJson(JSONObject(it)) }.getOrNull() }
+                if (cached != null && cached.mobile == auth.currentUser?.phoneNumber) {
+                    state = state.copy(checkingSession = false, user = cached, sessionToken = storedToken, sessionExpiresAt = storedExpiry,
+                        error = null)
+                    scheduleSessionExpiry(storedExpiry)
+                } else state = state.copy(checkingSession = false, error = "Connect once to restore your authorized ULA session.")
             } catch (error: Exception) {
                 requireFreshOtp("Your saved session is no longer valid. Request a new OTP to continue.")
             }
@@ -78,7 +87,10 @@ class UlaViewModel(application: Application) : AndroidViewModel(application) {
         preferences.edit()
             .putString("session_token", session.token)
             .putLong("session_expires_at", session.expiresAt)
-            .apply()
+            .putString("session_user", JSONObject().put("mobile", session.user.mobile).put("name", session.user.name)
+                .put("role", session.user.role).put("permissions", JSONObject(session.user.permissionsJson)).toString())
+            .commit()
+        PhotoQueue(getApplication()).schedule()
         state = state.copy(
             checkingSession = false,
             user = session.user,
@@ -92,6 +104,7 @@ class UlaViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun rejectSession(error: Exception) {
         expiryJob?.cancel()
+        android.webkit.WebStorage.getInstance().deleteAllData()
         preferences.edit().clear().apply()
         auth.signOut()
         state = UlaAppState(
@@ -111,6 +124,7 @@ class UlaViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun requireFreshOtp(message: String) {
         expiryJob?.cancel()
+        android.webkit.WebStorage.getInstance().deleteAllData()
         preferences.edit().clear().apply()
         auth.signOut()
         state = UlaAppState(checkingSession = false, error = message)
@@ -274,6 +288,7 @@ class UlaViewModel(application: Application) : AndroidViewModel(application) {
     fun logout() {
         val token = state.sessionToken
         expiryJob?.cancel()
+        android.webkit.WebStorage.getInstance().deleteAllData()
         state = UlaAppState(checkingSession = false)
         preferences.edit().clear().apply()
         auth.signOut()

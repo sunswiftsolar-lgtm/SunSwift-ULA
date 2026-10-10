@@ -1,10 +1,10 @@
 {
   "webVersion": "45.12",
-  "androidVersion": "1.6.0",
-  "versionCode": 8,
+  "androidVersion": "1.7.1",
+  "versionCode": 10,
   "assetFile": "ula-web.html",
   "sourceSha256": "294a719f7c2f67abe0fb891ea5dc6323eebb5bf6a8f27ad12d18d98ad0463dbd",
-  "assetSha256": "d1f7c3d65d6606d9fa614ea810bd8c97a275ee8076c57d9fc78eb8a3a055a53c",
+  "assetSha256": "061e233a734ba0eb6b098ebad14acc3f3852a4b08b2870d9f45c1535e9478909",
   "sourceControls": [
     "consumerName",
     "consumerNo",

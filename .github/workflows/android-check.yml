@@ -28,6 +28,8 @@ jobs:
         run: node scripts/verify-web.mjs
       - name: Verify privacy links and OTP consent
         run: node scripts/verify-privacy.mjs
+      - name: Verify durable non-blocking photo capture
+        run: node scripts/verify-offline-photos.mjs
       - name: Build and lint
         run: bash gradlew assembleDebug lintDebug
       - name: Check 64-bit native alignment
