@@ -1,10 +1,12 @@
 package com.sunswift.ula
 
+import android.net.Network
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -13,7 +15,7 @@ private const val ULA_WEB_APP_URL =
 
 class UlaApiException(message: String) : Exception(message)
 
-class UlaApi {
+class UlaApi(private val jobNetwork: Network? = null) {
     suspend fun webCall(sessionToken: String, method: String, args: JSONArray): JSONObject =
         post("webCall", JSONObject().put("sessionToken", sessionToken).put("method", method).put("args", args))
 
@@ -177,7 +179,10 @@ class UlaApi {
                 .put("action", action)
                 .put("payload", payload)
                 .toString()
-            val connection = (URL(ULA_WEB_APP_URL).openConnection() as HttpURLConnection).apply {
+            // JobScheduler can assign a network when the app has no usable default route.
+            // Scope routing to this request; never bind the entire app process to a network.
+            val url = URL(ULA_WEB_APP_URL)
+            val connection = ((jobNetwork?.openConnection(url) ?: url.openConnection()) as HttpURLConnection).apply {
                 requestMethod = "POST"
                 connectTimeout = 30_000
                 readTimeout = 60_000
@@ -192,7 +197,11 @@ class UlaApi {
                 connection.outputStream.use { output ->
                     output.write(request.toByteArray(Charsets.UTF_8))
                 }
-                val stream = if (connection.responseCode in 200..299) {
+                val responseCode = connection.responseCode
+                if (responseCode == 408 || responseCode == 429 || responseCode in 500..599) {
+                    throw IOException("Temporary cloud HTTP $responseCode")
+                }
+                val stream = if (responseCode in 200..299) {
                     connection.inputStream
                 } else {
                     connection.errorStream

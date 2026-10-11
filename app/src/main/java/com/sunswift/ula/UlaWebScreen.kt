@@ -327,6 +327,7 @@ fun UlaWebScreen(state: UlaAppState, onLogout: () -> Unit) {
         )
         Surface(color = Color.White) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                AppUpdatesLink()
                 PrivacyPolicyLink()
             }
         }

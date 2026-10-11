@@ -6,6 +6,10 @@ import android.os.SystemClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.AppUpdateType
 import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -65,8 +69,18 @@ private const val WEB_REFERENCE_VERSION = BuildConfig.ULA_WEB_VERSION
 private const val OTP_VALIDITY_SECONDS = 300
 
 class MainActivity : ComponentActivity() {
+    private lateinit var appUpdates: UlaAppUpdates
+    private val updateLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+        if (::appUpdates.isInitialized) appUpdates.onFlowResult(result.resultCode)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val updateManager = AppUpdateManagerFactory.create(this)
+        appUpdates = UlaAppUpdates(this, updateManager) { info ->
+            updateManager.startUpdateFlowForResult(info, updateLauncher,
+                AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build())
+        }
         enableEdgeToEdge()
         setContent {
             MaterialTheme(
@@ -79,9 +93,22 @@ class MainActivity : ComponentActivity() {
                     error = UlaError
                 )
             ) {
-                UlaNativeApp(this)
+                CompositionLocalProvider(LocalUlaAppUpdates provides appUpdates) {
+                    UlaNativeApp(this)
+                    AppUpdateDialog(appUpdates)
+                }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (::appUpdates.isInitialized) appUpdates.check()
+    }
+
+    override fun onDestroy() {
+        if (::appUpdates.isInitialized) appUpdates.dispose()
+        super.onDestroy()
     }
 }
 
@@ -111,9 +138,15 @@ private fun SessionLoadingScreen() {
         ) {
             AppMark()
             Spacer(Modifier.height(22.dp))
+            Text(if (BuildConfig.DEBUG) "SunSwift ULA TEST" else "SunSwift ULA", color = UlaNavy)
+            Spacer(Modifier.height(8.dp))
             Text("Connecting securely to ULA…", color = UlaNavy, fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(18.dp))
             LinearProgressIndicator(Modifier.fillMaxWidth())
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                AppUpdatesLink()
+                PrivacyPolicyLink()
+            }
         }
     }
 }
@@ -260,7 +293,10 @@ private fun NativePhoneLogin(
                         fontSize = 14.sp
                     )
                     Spacer(Modifier.height(18.dp))
-                    PrivacyPolicyLink(Modifier.align(Alignment.End))
+                    Row(Modifier.align(Alignment.End), verticalAlignment = Alignment.CenterVertically) {
+                        AppUpdatesLink()
+                        PrivacyPolicyLink()
+                    }
 
                     if (verificationId == null) {
                         OutlinedTextField(

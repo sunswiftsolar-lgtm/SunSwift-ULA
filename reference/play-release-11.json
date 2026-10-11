@@ -1,0 +1,42 @@
+{
+  "appName": "ULA Data Management",
+  "packageName": "com.sunswift.ula",
+  "versionName": "1.7.2-web-v45.12",
+  "versionCode": 11,
+  "webReferenceVersion": "45.12",
+  "targetSdk": 36,
+  "preparedOn": "2026-10-11",
+  "playTrack": "Internal testing",
+  "playReleaseStatus": "Not uploaded; awaiting final offline phone photo-status verification",
+  "previousActiveVersionCode": 10,
+  "testerMembershipChanged": false,
+  "rolledOut": false,
+  "productionPublished": false,
+  "aab": {
+    "file": "releases/SunSwift-ULA-v1.7.2-Web-v45.12-Play-build11.aab",
+    "bytes": 15120069,
+    "sha256": "66feccbe43fd02b74bad718eb3e9d69710f931eb0587c1451a60d7004cd25fbe"
+  },
+  "apk": {
+    "file": "releases/SunSwift-ULA-v1.7.2-Web-v45.12-Play-build11.apk",
+    "bytes": 15589955,
+    "sha256": "d13575f8b912ccdeb11b8a74f4a4040178f7884d128a9e11803009ca90e8ec68"
+  },
+  "checks": {
+    "build": "Release APK/AAB, debug and Android test builds passed",
+    "lintErrors": 0,
+    "lintWarnings": 15,
+    "signature": "Verified; existing upload certificate retained",
+    "apk16KBZipAlignment": "Passed",
+    "apkAndAab64BitLoadAndRelroAlignment": "2/2 passed in each artifact",
+    "webPrivacyAndOfflineRegressions": "Passed",
+    "physicalInstall": "Signed code 11 installed in place on LAVA API 35; production data and session preserved",
+    "physicalQueueComponentTests": "OK (2 tests), 1.92 seconds: encrypted capture/GPS/compression/retention and scheduler migration preserving original. Separate debug package; synthetic fixtures only.",
+    "closedLockedUpload": "Two server-response confirmations at 08:33:01 and 08:33:28 IST after verified Recents removal and screen lock; drain ended without retry. Awaiting offline UI verification of remaining/superseded photos.",
+    "testLimits": "USB connected and charging; no deep-Doze, unplugged battery, force-stop or Play-app-signing installation test claimed",
+    "runtime16KBDeviceTest": "Not performed; connected phone uses 4 KB pages"
+  },
+  "consumerFieldsOrUserRolesChanged": false,
+  "newPermissionsAdded": false,
+  "evidencePrivacy": "Photos, exact coordinates, phone identity, UI dumps and screenshots excluded from Git"
+}

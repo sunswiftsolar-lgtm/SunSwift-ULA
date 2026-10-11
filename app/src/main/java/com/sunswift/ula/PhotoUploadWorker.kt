@@ -1,7 +1,9 @@
 package com.sunswift.ula
 
 import android.content.Context
+import android.os.Build
 import android.util.Base64
+import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.google.firebase.auth.FirebaseAuth
@@ -16,7 +18,9 @@ class PhotoUploadWorker(context: Context, params: WorkerParameters) : CoroutineW
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val queue = PhotoQueue(applicationContext)
         val preferences = applicationContext.getSharedPreferences("ula_native_session", 0)
-        val api = UlaApi()
+        val assignedNetwork = if (Build.VERSION.SDK_INT >= 28) network else null
+        val api = UlaApi(assignedNetwork)
+        Log.i(TAG, "Upload drain started; attempt=$runAttemptCount assignedNetwork=${assignedNetwork != null}")
         var retry = false
         for (item in queue.all().filter { it.optString("status") !in setOf("uploaded", "superseded") && it.optJSONObject("gps") != null }) {
             val id = item.getString("id")
@@ -28,6 +32,7 @@ class PhotoUploadWorker(context: Context, params: WorkerParameters) : CoroutineW
                 queue.update(id) { it.put("status", "login").put("message", "Photo safe on phone · original user must sign in to upload") }
                 continue
             }
+            var stage = "session"
             try {
                 val session = api.resumeSession(token)
                 if (session.user.mobile != mobile || (!session.user.canEdit && !JSONObject(session.user.permissionsJson).optBoolean("installationEdit")))
@@ -35,6 +40,7 @@ class PhotoUploadWorker(context: Context, params: WorkerParameters) : CoroutineW
                 val consumer = item.getJSONObject("record").getString("consumerNo")
                 val type = item.getString("imageType")
                 // Read back before retrying an uncertain response, and never overwrite a newer capture.
+                stage = "readback"
                 val listed = api.webCall(token, "listConsumerImages", JSONArray().put(consumer)).optJSONArray("images") ?: JSONArray()
                 val existing = (0 until listed.length()).map { listed.getJSONObject(it) }.firstOrNull { it.optString("imageType") == type }
                 if (existing != null && existing.optString("capturedAt") >= item.getString("capturedAt")) {
@@ -45,6 +51,7 @@ class PhotoUploadWorker(context: Context, params: WorkerParameters) : CoroutineW
                 queue.update(id) { it.put("status", "uploading").put("message", "Saved on phone · processing/uploading in background") }
                 var jpeg = queue.prepared(item)
                 if (jpeg == null) {
+                    stage = "prepare"
                     val gps = item.getJSONObject("gps")
                     val address = try {
                         api.webCall(token, "reverseGeocodeLocation", JSONArray().put(gps.getDouble("latitude")).put(gps.getDouble("longitude"))).optString("formattedAddress")
@@ -61,16 +68,26 @@ class PhotoUploadWorker(context: Context, params: WorkerParameters) : CoroutineW
                     .put("dataUrl", "data:image/jpeg;base64," + Base64.encodeToString(jpeg, Base64.NO_WRAP))
                     .put("latitude", gps.getDouble("latitude")).put("longitude", gps.getDouble("longitude"))
                     .put("accuracy", gps.getDouble("accuracy")).put("capturedAt", item.getString("capturedAt"))
+                stage = "upload"
                 val saved = api.webCall(token, "saveConsumerImage", JSONArray().put(payload))
                 queue.update(id) { it.put("status", "uploaded").put("message", "Uploaded · original also safe on phone").put("image", saved) }
+                Log.i(TAG, "Photo upload confirmed")
             } catch (cancelled: CancellationException) { throw cancelled }
             catch (error: UlaApiException) {
+                Log.w(TAG, "Upload needs attention; stage=$stage")
                 queue.update(id) { it.put("status", "attention").put("message", "Photo safe on phone · ${error.message}") }
-            } catch (_: Exception) {
-                queue.update(id) { it.put("status", "pending").put("message", "Saved on phone · connection interrupted; upload will retry") }
+            } catch (error: Exception) {
+                // Never log tokens, image bytes, consumer details, GPS or exception messages.
+                Log.w(TAG, "Upload deferred; stage=$stage errorClass=${error.javaClass.simpleName}")
+                queue.update(id) { it.put("status", "pending").put("message", "Saved on phone · connection interrupted; upload will retry")
+                    .put("lastFailureStage", stage).put("lastFailureClass", error.javaClass.simpleName) }
                 retry = true
+                break // A broken connection is shared; don't hammer the server for each photo.
             }
         }
+        Log.i(TAG, "Upload drain ended; retry=$retry")
         if (retry) Result.retry() else Result.success()
     }
+
+    private companion object { const val TAG = "UlaPhotoUpload" }
 }

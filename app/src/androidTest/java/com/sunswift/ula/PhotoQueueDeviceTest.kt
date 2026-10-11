@@ -2,6 +2,12 @@ package com.sunswift.ula
 
 import android.graphics.Bitmap
 import android.location.Location
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.*
@@ -10,9 +16,46 @@ import org.junit.runner.RunWith
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 @RunWith(AndroidJUnit4::class)
 class PhotoQueueDeviceTest {
+    @Test fun upgradeResetsFailedScheduleButPreservesEncryptedOriginal() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val queue = PhotoQueue(context)
+        val manager = WorkManager.getInstance(context)
+        val owner = UlaUser("+910000000000", "Synthetic migration test", "EDITOR", false, true)
+        val draft = queue.begin(JSONObject().put("consumerNo", "ULATESTB9002").put("consumerName", "Synthetic only"), "plant", owner)
+        val bytes = byteArrayOf(1, 2, 3, 4, 5)
+        queue.captureFile(draft).writeBytes(bytes)
+        val saved = queue.confirmDraft()
+        val id = saved.getString("id")
+        try {
+            val old = OneTimeWorkRequestBuilder<PhotoUploadWorker>()
+                .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                .setInitialDelay(1, TimeUnit.HOURS).build()
+            manager.enqueueUniqueWork(PhotoQueue.WORK_NAME, ExistingWorkPolicy.REPLACE, old).result.get(10, TimeUnit.SECONDS)
+            context.getSharedPreferences("ula_photo_scheduler", 0).edit().putInt("network_version", 1).commit()
+            queue.schedule()
+            // Observe the async migration; do not force the worker or bypass its constraints.
+            val deadline = android.os.SystemClock.elapsedRealtime() + 10_000
+            var oldState = manager.getWorkInfoById(old.id).get(10, TimeUnit.SECONDS)?.state
+            while (oldState != null && oldState != WorkInfo.State.CANCELLED && android.os.SystemClock.elapsedRealtime() < deadline) {
+                Thread.sleep(30)
+                oldState = manager.getWorkInfoById(old.id).get(10, TimeUnit.SECONDS)?.state
+            }
+            val work = manager.getWorkInfosForUniqueWork(PhotoQueue.WORK_NAME).get(10, TimeUnit.SECONDS)
+            assertTrue(oldState == null || oldState == WorkInfo.State.CANCELLED)
+            assertTrue(work.any { it.id != old.id && it.state != WorkInfo.State.CANCELLED })
+            assertEquals(2, context.getSharedPreferences("ula_photo_scheduler", 0).getInt("network_version", 0))
+            assertArrayEquals(bytes, PhotoQueue(context).raw(saved))
+            assertTrue(PhotoQueue(context).all().any { it.getString("id") == id })
+        } finally {
+            // Only this synthetic UUID in the separate debug package, never the production queue.
+            for (suffix in listOf("raw", "json", "jpeg")) File(context.noBackupFilesDir, "offline-photos/$id.$suffix").delete()
+        }
+    }
+
     @Test fun durableEncryptedCapturesGpsAndCompression() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val queue = PhotoQueue(context)

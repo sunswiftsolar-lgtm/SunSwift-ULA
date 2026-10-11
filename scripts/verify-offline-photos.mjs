@@ -23,6 +23,11 @@ assert.match(queue,/noBackupFilesDir/);assert.match(queue,/AES\/GCM\/NoPadding/)
 assert.match(queue,/NetworkType.CONNECTED/);assert.match(queue,/BackoffPolicy.EXPONENTIAL/);
 assert.match(worker,/api.resumeSession\(token\)/);assert.match(worker,/firebaseMobile != mobile/);
 assert.match(worker,/listConsumerImages/);assert.match(worker,/Result.retry\(\)/);
+assert.match(read('app/build.gradle'),/work-runtime-ktx:2\.11\.2/);
+assert.match(worker,/UlaApi\(assignedNetwork\)/);
+assert.match(read('app/src/main/java/com/sunswift/ula/UlaApi.kt'),/jobNetwork\?\.openConnection\(url\)/);
+assert.match(queue,/if \(upgradeScheduler\) ExistingWorkPolicy.REPLACE else ExistingWorkPolicy.APPEND_OR_REPLACE/);
+assert.ok(!worker.includes('Log.w(TAG, error.message'));
 assert.ok(!read('app/src/main/AndroidManifest.xml').includes('ACCESS_BACKGROUND_LOCATION'));
 const service=read('app/src/main/java/com/sunswift/ula/CaptureLocationService.kt');
 assert.match(service,/FOREGROUND_SERVICE_TYPE_LOCATION/);

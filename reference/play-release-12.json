@@ -1,0 +1,58 @@
+{
+  "appName": "ULA Data Management",
+  "packageName": "com.sunswift.ula",
+  "versionName": "1.7.3-web-v45.12",
+  "versionCode": 12,
+  "webReferenceVersion": "45.12",
+  "preparedOn": "2026-10-11",
+  "targetSdk": 36,
+  "playTrack": "Internal testing",
+  "playReleaseStatus": "Active; Available to internal testers; Not reviewed",
+  "releasedOnObserved": "11 Oct 2026 09:55 IST",
+  "previousActiveVersionCode": 10,
+  "testerMembershipChanged": false,
+  "selectedTesterCountObserved": 13,
+  "rolledOut": true,
+  "productionPublished": false,
+  "aab": {
+    "file": "releases/SunSwift-ULA-v1.7.3-Web-v45.12-Play-build12.aab",
+    "bytes": 15145354,
+    "sha256": "f0e33977217b79b8b08478f66a377aeabefdac7a2c0198f4490eb31530f3341e"
+  },
+  "apk": {
+    "file": "releases/SunSwift-ULA-v1.7.3-Web-v45.12-Play-build12.apk",
+    "bytes": 15606498,
+    "sha256": "5f40bc114111797d7cbffbe77c6623aa7bcb5c8875cb3740e2a90e004bd637e3"
+  },
+  "changes": [
+    "WorkManager background-network fix from candidate build 11 retained",
+    "Play-controlled higher-version check on foreground entry with daily per-version prompt limit",
+    "App updates accessible during loading, before login and after login",
+    "Flexible download needs Play consent; restart requires explicit user action after saving edits",
+    "Sideload/offline/API errors do not claim current version; fixed internal-testing link fallback",
+    "Isolated debug package labelled SunSwift ULA TEST"
+  ],
+  "checks": {
+    "playPreview": "No blocking errors; one missing-deobfuscation-file warning for non-minified release. Only code 12 included; code 10 remains in artifact library/history.",
+    "signature": "Verified; existing upload certificate retained",
+    "lintErrors": 0,
+    "lintWarnings": 18,
+    "apk16KBZipAlignment": "Passed",
+    "apkAndAab64BitLoadAndRelroAlignment": "2/2 passed in each artifact",
+    "regressions": "Web, privacy, offline-photo and app-update static checks passed",
+    "build": "Final signed release APK/AAB, release lint, debug and Android test builds passed",
+    "physicalInstrumentation": "Final repeat OK (7 tests), 2.136 seconds: five FakeAppUpdateManager scenarios plus two encrypted-photo/migration tests in isolated debug package. No real Play download/install, live records or production photo writes in these tests.",
+    "physicalInstall": "Signed production code 12 installed in place, app storage inode unchanged; Administrator dashboard observed after initial install. Final loading-screen update link observed after final install.",
+    "realUpdateButton": "Shows installed 1.7.3/build 12, then safe cannot-check message on this locally installed APK. No eligible real Play upgrade demonstrated.",
+    "realPlayUpgrade": "Pending Play-installed same-signature lower-version app plus higher eligible internal release; older versions without this feature need one manual compatible update",
+    "closedLockedPhotoUpload": "Candidate build 11 produced two confirmed server responses after verified app closure and phone lock. Final code-12 UI check with active default network none: all four current slots Uploaded, originals safe on phone, 4/4 saved in Drive, zero waiting. Not a fresh build-12 locked-screen upload test; USB connected/charging, not force-stopped or deep Doze.",
+    "runtime16KBDeviceTest": "Not performed; connected phone uses 4 KB pages"
+  },
+  "officePackageLabel": "SunSwift ULA",
+  "debugPackage": "com.sunswift.ula.debug",
+  "debugPackageLabel": "SunSwift ULA TEST",
+  "newPermissionsAdded": false,
+  "productionUninstallOrDataClear": false,
+  "consumerFieldsOrUserRolesChanged": false,
+  "evidencePrivacy": "Screenshots, UI dumps, photographs and exact locations excluded from Git"
+}

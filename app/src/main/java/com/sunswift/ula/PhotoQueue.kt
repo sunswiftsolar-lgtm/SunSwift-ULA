@@ -160,11 +160,18 @@ class PhotoQueue(private val context: Context) {
         return JSONObject().put("items", items)
     }
 
-    fun schedule() {
+    fun schedule() = synchronized(lock) {
+        val schedulerPreferences = context.getSharedPreferences("ula_photo_scheduler", 0)
+        val upgradeScheduler = schedulerPreferences.getInt("network_version", 0) < 2
         val request = OneTimeWorkRequestBuilder<PhotoUploadWorker>()
             .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 10, TimeUnit.SECONDS).build()
-        WorkManager.getInstance(context).enqueueUniqueWork(WORK_NAME, ExistingWorkPolicy.APPEND_OR_REPLACE, request)
+        // One-time migration replaces the old, repeatedly failed work chain, not any photo.
+        // Later captures append a drain so photos added during a running drain cannot be missed.
+        WorkManager.getInstance(context).enqueueUniqueWork(WORK_NAME,
+            if (upgradeScheduler) ExistingWorkPolicy.REPLACE else ExistingWorkPolicy.APPEND_OR_REPLACE, request)
+        if (upgradeScheduler) schedulerPreferences.edit().putInt("network_version", 2).commit()
+        Unit
     }
 
     companion object {
